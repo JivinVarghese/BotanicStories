@@ -9,4 +9,10 @@ class UserDetail(models.Model):
     location = models.CharField(max_length=100, blank=True)
     interests = models.TextField(blank=True)
 
+class Post(models.Model):
+    post_id = models.AutoField(primary_key=True)
+    post_title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='post_images/', blank=True)
+    content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
