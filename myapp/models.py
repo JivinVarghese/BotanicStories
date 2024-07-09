@@ -31,3 +31,8 @@ class Bookmark(models.Model):
     bookmark_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+class Tag(models.Model):
+    tag_id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    tag_name = models.CharField(max_length=50)
