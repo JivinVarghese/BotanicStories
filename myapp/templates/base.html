@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,109 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BotanicStories</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Charter:wght@400;700&family=Fell:wght@400;700&family=Helvetica:wght@400;700&family=Kievit:wght@400;700&family=Noe:wght@400;700&family=Marath+Sans:wght@400;700&family=Sohne:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Sidebar styles */
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            right: 0;
-            background-color: #ffffff;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-            font-family: 'Kievit', sans-serif;
-
-        }
-
-        .sidebar a:hover {
-            color: #f1f1f1;
-        }
-
-        .profile-icon {
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        /* Hide sidebar when scrolling */
-        body, html {
-            overflow-x: hidden;
-        }
-
-        .sidebar:hover {
-            overflow-y: auto;
-        }
-
-        /* Add this style for the sidebar to be on top */
-        .overlay {
-            height: 100%;
-            width: 100%;
-            position: fixed;
-            z-index: 0;
-            top: 0;
-            left: 0;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
-        }
-
-        /* Navbar and other styles */
-        .navbar-brand {
-            font-family: 'Fell', serif;
-            font-size: xx-large;
-            font-weight: bold;
-        }
-
-        .nav-link {
-            font-family: 'Kievit', sans-serif;
-            font-size: large;
-
-        }
-
-        .form-control {
-            font-family: 'Kievit', sans-serif;
-        }
-
-        .rounded-100 {
-            border-radius: 50px;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background-color: #f1f1f1;
-            border-radius: 50px;
-            padding: 5px 10px;
-        }
-
-        .search-bar input {
-            border: none;
-            outline: none;
-            background: none;
-            flex: 1;
-            font-family: 'Kievit', sans-serif;
-        }
-
-        .search-bar .search-icon {
-            margin-right: 5px;
-            margin-left: 2px;
-        }
-
-        .write-icon {
-            margin-right: 1px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <div id="mySidebar" class="sidebar">
