@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -9,6 +10,7 @@ class CommentForm(forms.ModelForm):
             'comment_text': forms.Textarea(
                 attrs={'class': 'form-control', 'placeholder': 'Add a public comment...', 'rows': 3})
         }
+
 
 class PostForm(forms.ModelForm):
     tags = forms.CharField(max_length=200, required=False, help_text='Enter tags separated by commas.')

@@ -1,7 +1,8 @@
 # botanic/urls.py
 from django.urls import path
-from .views import *
-
+from myapp import views
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
                   path('', views.base, name='base'),
                   path('create_post/', views.create_post, name='create_post'),

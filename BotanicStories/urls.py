@@ -21,5 +21,5 @@ app_name = 'myapp'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'myapp/', include('myapp.urls')),
+    path(r'', include('myapp.urls')),
 ]
