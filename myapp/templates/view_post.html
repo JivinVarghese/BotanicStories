@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <!-- Header -->
+{#    <header class="d-flex justify-content-between align-items-center mb-4">#}
+{#        <div class="logo">#}
+{#            <img src="{% static 'images/logo.png' %}" alt="Logo">#}
+{#        </div>#}
+{#        <nav>#}
+{#            <ul class="nav">#}
+{#                <li class="nav-item"><a href="{% url 'home' %}" class="nav-link">Home</a></li>#}
+{#                <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>#}
+{#                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>#}
+{#            </ul>#}
+{#        </nav>#}
+{#    </header>#}
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Title and author info -->
+            <h1 class="card-title display-4">{{ post.post_title }}</h1>
+            <p class="text-muted">By {{ post.author }} &bull; {{ post.read_time }} min read</p>
+
+            <!-- Interaction buttons -->
+            <div class="interaction-buttons d-flex justify-content-between my-4">
+                <div>
+                    <button class="btn btn-light">Like</button>
+                    <button class="btn btn-light">Comment</button>
+                    <button class="btn btn-light">Share</button>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Options
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="{% url 'edit_post' post.post_id %}">Edit</a></li>
+                        <li><a class="dropdown-item" href="{% url 'delete_post' post.post_id %}">Delete</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Post image -->
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-fluid mb-4" alt="Post Image">
+            {% endif %}
+
+            <!-- Post content -->
+            <p class="card-text">{{ post.content }}</p>
+
+            <!-- Tags -->
+            <p><strong>Tags:</strong> {% for tag in tags %}{{ tag.tag_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* General styles */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+header .logo img {
+    height: 50px;
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 0;
+}
+
+.card-body {
+    padding: 40px;
+}
+
+.card-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.text-muted {
+    font-size: 1rem;
+    color: #888;
+}
+
+/* Interaction buttons */
+.interaction-buttons button {
+    margin-right: 10px;
+}
+
+.interaction-buttons .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Post image */
+.img-fluid {
+    width: 100%;
+    height: auto;
+}
+
+/* Tags */
+.card-text strong {
+    display: block;
+    margin-top: 20px;
+}
+</style>
+
+<script>
+// Toggle dropdown menu
+document.addEventListener('DOMContentLoaded', (event) => {
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+
+    dropdownToggle.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dropdownToggle.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+});
+</script>
+{% endblock %}

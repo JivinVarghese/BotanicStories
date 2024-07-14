@@ -1,10 +1,12 @@
 # botanic/urls.py
-from django.urls import path, include
-
-from . import views
-from .views import base
+from django.urls import path
+from .views import *
 
 urlpatterns = [
-    path('', base, name='base'),
-    path('comments/', views.comments, name='comments'),
-]
+                  path('', views.base, name='base'),
+                  path('create_post/', views.create_post, name='create_post'),
+                  path('post/<int:post_id>/', views.view_post, name='view_post'),
+                  path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
+                  path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+                  path('comments/', views.comments, name='comments'),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
