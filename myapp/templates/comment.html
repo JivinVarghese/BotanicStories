@@ -1,3 +1,193 @@
+{#{% extends 'base.html' %}#}
+{#{% load static %}#}
+{##}
+{#{% block content %}#}
+{#<style>#}
+{#    .sidenav {#}
+{#        height: 100%;#}
+{#        width: 0;#}
+{#        position: fixed;#}
+{#        z-index: 2;#}
+{#        top: 0;#}
+{#        right: 0;#}
+{#        background-color: #fff;#}
+{#        overflow-x: hidden;#}
+{#        transition: 0.5s;#}
+{#        box-shadow: -2px 0 5px rgba(0,0,0,0.5);#}
+{#    }#}
+{#    .sidenav .closebtn {#}
+{#        position: absolute;#}
+{#        top: 10px;#}
+{#        right: 25px;#}
+{#        font-size: 36px;#}
+{#        cursor: pointer;#}
+{#    }#}
+{#    .sidenav .header {#}
+{#        padding: 16px;#}
+{#        border-bottom: 1px solid #ddd;#}
+{#    }#}
+{#    .sidenav .comment-section {#}
+{#        padding: 16px;#}
+{#        border-bottom: #818181;#}
+{#    }#}
+{#    .sidenav .comment {#}
+{#        display: flex;#}
+{#        align-items: flex-start; /* Align items at the top */#}
+{#        margin-bottom: 15px;#}
+{#        border-bottom: 1px solid lightgray;#}
+{#        padding-bottom: 10px;#}
+{#    }#}
+{#    .sidenav .avatar {#}
+{#        width: 40px;#}
+{#        height: 40px;#}
+{#        border-radius: 50%;#}
+{#        background-color: #33691E;#}
+{#        color: #fff;#}
+{#        display: flex;#}
+{#        justify-content: center;#}
+{#        align-items: center;#}
+{#        font-size: 18px;#}
+{#        font-weight: bold;#}
+{#        margin-right: 10px;#}
+{#    }#}
+{#    .sidenav .comment-body {#}
+{#        flex: 1;#}
+{#        position: relative; /* Add relative positioning to comment-body */#}
+{#    }#}
+{#    .sidenav .comment-body h5 {#}
+{#        margin: 0;#}
+{#        font-size: 16px;#}
+{#        display: flex;#}
+{#        justify-content: space-between; /* Space out the name and the dots */#}
+{#        align-items: center;#}
+{#    }#}
+{#    .sidenav .comment-body .time {#}
+{#        font-size: 12px;#}
+{#        color: #999;#}
+{#        margin-bottom: 5px;#}
+{#    }#}
+{#    .sidenav .comment-body p {#}
+{#        margin: 0; /* Remove default margins for p tag */#}
+{#    }#}
+{#    .sidenav .comment-body a {#}
+{#        color: black;#}
+{#        text-decoration: none;#}
+{#        font-size: 14px;#}
+{#    }#}
+{#    .sidenav .comment-body a:hover {#}
+{#        background-color: lightgray;#}
+{#    }#}
+{#    .dropdown {#}
+{#        position: relative;#}
+{#        display: inline-block;#}
+{#    }#}
+{#    .dropdown-content {#}
+{#        display: none;#}
+{#        position: absolute;#}
+{#        right: 0;#}
+{#        background-color: #f9f9f9;#}
+{#        min-width: 160px;#}
+{#        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);#}
+{#        z-index: 1;#}
+{#    }#}
+{#    .dropdown-content a {#}
+{#        color: black;#}
+{#        padding: 12px 16px;#}
+{#        text-decoration: none;#}
+{#        display: block;#}
+{#    }#}
+{#    .dropdown-btn{#}
+{#        border: none;#}
+{#        background-color: white;#}
+{#    }#}
+{#    .dropdown:hover .dropdown-content {#}
+{#        display: block;#}
+{#    }#}
+{##}
+{#    .sidenav .add-comment {#}
+{#        margin: 16px;#}
+{#        padding: 16px;#}
+{#        height: 8rem;#}
+{#        border-radius: 8px;#}
+{#        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);#}
+{#        display: flex;#}
+{#        flex-direction: column;#}
+{#    }#}
+{#    .sidenav .add-comment .form-control {#}
+{#        border: 0;#}
+{#        resize: none;#}
+{#        box-shadow: none;#}
+{#        flex: 1;#}
+{#        margin-bottom: 10px;#}
+{#    }#}
+{#    .sidenav .add-comment .btn {#}
+{#        align-self: flex-end;#}
+{#        border-radius: 30px ;#}
+{#        background-color: #33691E;#}
+{#        border: none;#}
+{#        margin-top: auto;#}
+{##}
+{#    }#}
+{#</style>#}
+{##}
+{#<div class="container">#}
+{#    <div class="main">#}
+{#        <h2>Article Title</h2>#}
+{#        <p>Article content goes here...</p>#}
+{#        <button class="btn btn-primary" onclick="openNav2()">Comment</button>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<div id="mySidenav" class="sidenav">#}
+{#    <span class="closebtn" onclick="closeNav2()">&times;</span>#}
+{#    <div class="header">#}
+{#        <h4>Responses (1)</h4>#}
+{#    </div>#}
+{#    <form class="add-comment" method="post">#}
+{#        {% csrf_token %}#}
+{#        {{ form.comment_text }}#}
+{#        <textarea class="form-control" placeholder="Add a public comment..." rows="3"></textarea>#}
+{#        <button class="btn btn-primary">Comment</button>#}
+{#    </form>#}
+{#    <div class="comment-section">#}
+{#        <div class="comment">#}
+{#            <div class="avatar">BJ</div>#}
+{#            <div class="comment-body">#}
+{#                <h5>#}
+{#                    Brijitjoffy#}
+{#                    <div class="dropdown">#}
+{#                        <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>#}
+{#                        <div class="dropdown-content">#}
+{#                            <a href="#">Edit</a>#}
+{#                            <a href="#">Delete</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </h5>#}
+{#                <div class="time">less than a minute ago</div>#}
+{#                <p>Nice article, but how would you decompress this?</p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{#<script>#}
+{#    function openNav2() {#}
+{#        document.getElementById("mySidenav").style.width = "350px";#}
+{#    }#}
+{##}
+{#    function closeNav2() {#}
+{#        document.getElementById("mySidenav").style.width = "0";#}
+{#    }#}
+{#</script>#}
+{##}
+{#<!-- Include FontAwesome for the ellipsis icon -->#}
+{#<script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>#}
+{##}
+{#{% endblock %}#}
+{##}
+
+
 {% extends 'base.html' %}
 {% load static %}
 
@@ -107,7 +297,7 @@
     .sidenav .add-comment {
         margin: 16px;
         padding: 16px;
-        height: 8rem;
+        {#height: 8rem;#}
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         display: flex;
@@ -120,11 +310,17 @@
         flex: 1;
         margin-bottom: 10px;
     }
+    .sidenav .add-comment form {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
     .sidenav .add-comment .btn {
         align-self: flex-end;
         border-radius: 30px ;
         background-color: #33691E;
         border: none;
+        margin-top: auto; /* Push the button to the bottom */
     }
 </style>
 
@@ -142,8 +338,11 @@
         <h4>Responses (1)</h4>
     </div>
     <div class="add-comment">
-        <textarea class="form-control" placeholder="Add a public comment..." rows="3"></textarea>
-        <button class="btn btn-primary">Comment</button>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.comment_text }}
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
     </div>
     <div class="comment-section">
         <div class="comment">
@@ -181,9 +380,3 @@
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
 
 {% endblock %}
-
-
-
-
-
-
