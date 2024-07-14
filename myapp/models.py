@@ -1,5 +1,8 @@
+from django.utils import timezone
+
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class UserDetail(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -9,6 +12,7 @@ class UserDetail(models.Model):
     location = models.CharField(max_length=100, blank=True)
     interests = models.TextField(blank=True)
 
+
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
     post_title = models.CharField(max_length=200)
@@ -16,21 +20,27 @@ class Post(models.Model):
     content = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment_text = models.TextField()
+    created_time = models.DateTimeField(default=timezone.now)
+    updated_time = models.DateTimeField(auto_now=True)
+
 
 class Like(models.Model):
     like_id = models.AutoField(primary_key=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
 class Bookmark(models.Model):
     bookmark_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
 
 class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
