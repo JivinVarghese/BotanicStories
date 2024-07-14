@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{% url 'edit_post' post.post_id %}" class="btn btn-primary mx-2">Edit</a>
+                <a href="{% url 'delete_post' post.post_id %}" class="btn btn-danger mx-2">Delete</a>
+            </div>
+            <h2 class="card-title">{{ post.post_title }}</h2>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+            {% endif %}
+            <p class="card-text mt-3">{{ post.content }}</p>
+        </div>
+    </div>
+    <p><strong>Tags:</strong> {% for tag in tags %}{{ tag.tag_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+</div>
+{% endblock %}
+
+
+
+
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block content %}#}
+{#<div class="post-container">#}
+{#    <header class="post-header">#}
+{#        <h1>{{ post.title }}</h1>#}
+{#        <div class="post-meta">#}
+{#            <p>{{ post.author.username }}</p>#}
+{#            <p>{{ post.read_time }} min read · {{ post.published_at|date:"F j, Y" }}</p>#}
+{#        </div>#}
+{#        <div class="post-actions">#}
+{#            <button id="edit-post-btn" class="btn btn-primary" data-url="{% url 'edit_post' post.id %}">Edit</button>#}
+{#            <button id="delete-post-btn" class="btn btn-danger"  data-url="{% url 'delete_post' post.id %}">Delete</button>#}
+{#        </div>#}
+{#    </header>#}
+{##}
+{#    <article class="post-content">#}
+{#        {{ post.content|safe }}#}
+{#    </article>#}
+{#</div>#}
+{##}
+{#<!-- Edit Post Modal -->#}
+{#<div id="editPostModal" class="modal">#}
+{#    <div class="modal-content">#}
+{#        <span class="close">&times;</span>#}
+{#        <h2>Edit Post</h2>#}
+{#        <form id="editPostForm" method="POST" action="{% url 'edit_post' post.id %}">#}
+{#            {% csrf_token %}#}
+{#            <div class="form-group">#}
+{#                <label for="title">Title</label>#}
+{#                <input type="text" id="title" name="title" value="{{ post.title }}" required>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="content">Content</label>#}
+{#                <textarea id="content" name="content" required>{{ post.content }}</textarea>#}
+{#            </div>#}
+{#            <button type="submit" class="btn btn-primary">Publish</button>#}
+{#        </form>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<!-- Delete Post Confirmation -->#}
+{#<div id="deletePostModal" class="modal">#}
+{#    <div class="modal-content">#}
+{#        <span class="close">&times;</span>#}
+{#        <h2>Are you sure you want to delete this post?</h2>#}
+{#        <form id="deletePostForm" method="POST" action="{% url 'delete_post' post.id %}">#}
+{#            {% csrf_token %}#}
+{#            <button type="submit" class="btn btn-danger">Yes, Delete</button>#}
+{#        </form>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<script>#}
+{#    // Get the modals#}
+{#    var editPostModal = document.getElementById("editPostModal");#}
+{#    var deletePostModal = document.getElementById("deletePostModal");#}
+{##}
+{#    // Get the button that opens the edit modal#}
+{#    var editBtn = document.getElementById("edit-post-btn");#}
+{##}
+{#    // Get the button that opens the delete modal#}
+{#    var deleteBtn = document.getElementById("delete-post-btn");#}
+{##}
+{#    // Get the <span> element that closes the modal#}
+{#    var closeEditModal = editPostModal.getElementsByClassName("close")[0];#}
+{#    var closeDeleteModal = deletePostModal.getElementsByClassName("close")[0];#}
+{##}
+{#    // When the user clicks the button, open the modal#}
+{#    editBtn.onclick = function() {#}
+{#        editPostModal.style.display = "block";#}
+{#    }#}
+{##}
+{#    deleteBtn.onclick = function() {#}
+{#        deletePostModal.style.display = "block";#}
+{#    }#}
+{##}
+{#    // When the user clicks on <span> (x), close the modal#}
+{#    closeEditModal.onclick = function() {#}
+{#        editPostModal.style.display = "none";#}
+{#    }#}
+{##}
+{#    closeDeleteModal.onclick = function() {#}
+{#        deletePostModal.style.display = "none";#}
+{#    }#}
+{##}
+{#    // When the user clicks anywhere outside of the modal, close it#}
+{#    window.onclick = function(event) {#}
+{#        if (event.target == editPostModal) {#}
+{#            editPostModal.style.display = "none";#}
+{#        }#}
+{#        if (event.target == deletePostModal) {#}
+{#            deletePostModal.style.display = "none";#}
+{#        }#}
+{#    }#}
+{#</script>#}
+{##}
+{#<style>#}
+{#    .post-container {#}
+{#        width: 60%;#}
+{#        margin: 0 auto;#}
+{#    }#}
+{#    .post-header {#}
+{#        display: flex;#}
+{#        justify-content: space-between;#}
+{#        align-items: center;#}
+{#    }#}
+{#    .post-meta {#}
+{#        display: flex;#}
+{#        gap: 10px;#}
+{#    }#}
+{#    .post-actions {#}
+{#        display: flex;#}
+{#        gap: 10px;#}
+{#    }#}
+{#    .btn {#}
+{#        padding: 10px 20px;#}
+{#        border: none;#}
+{#        cursor: pointer;#}
+{#    }#}
+{#    .btn-primary {#}
+{#        background-color: #007bff;#}
+{#        color: white;#}
+{#    }#}
+{#    .btn-danger {#}
+{#        background-color: #dc3545;#}
+{#        color: white;#}
+{#    }#}
+{#    .modal {#}
+{#        display: none;#}
+{#        position: fixed;#}
+{#        z-index: 1;#}
+{#        left: 0;#}
+{#        top: 0;#}
+{#        width: 100%;#}
+{#        height: 100%;#}
+{#        overflow: auto;#}
+{#        background-color: rgb(0,0,0);#}
+{#        background-color: rgba(0,0,0,0.4);#}
+{#    }#}
+{#    .modal-content {#}
+{#        background-color: #fefefe;#}
+{#        margin: 15% auto;#}
+{#        padding: 20px;#}
+{#        border: 1px solid #888;#}
+{#        width: 80%;#}
+{#    }#}
+{#    .close {#}
+{#        color: #aaa;#}
+{#        float: right;#}
+{#        font-size: 28px;#}
+{#        font-weight: bold;#}
+{#    }#}
+{#    .close:hover,#}
+{#    .close:focus {#}
+{#        color: black;#}
+{#        text-decoration: none;#}
+{#        cursor: pointer;#}
+{#    }#}
+{#    .form-group {#}
+{#        margin-bottom: 15px;#}
+{#    }#}
+{#    .form-group label {#}
+{#        display: block;#}
+{#        margin-bottom: 5px;#}
+{#    }#}
+{#    .form-group input,#}
+{#    .form-group textarea {#}
+{#        width: 100%;#}
+{#        padding: 10px;#}
+{#        border: 1px solid #ccc;#}
+{#        border-radius: 4px;#}
+{#    }#}
+{#</style>#}
+{#{% endblock %}#}
