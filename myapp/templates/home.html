@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {% for post in posts %}
+    <div class="post-container" data-post-id="{{ post.id }}">
+        <div class="post-content">
+            <div class="post-header">
+            <div class="user-info">
+                {% if post.user_image %}
+                <img class="user-icon" src="{{ post.user_image }}" alt="{{ post.user_name }}">
+                {% else %}
+                <div class="user-initial">{{ post.user_name|slice:":1" }}</div>
+                {% endif %}
+                <span class="user-name">{{ post.user_name }}</span>
+            </div>
+            <div class="tags">
+                {% for tag in post.tags %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+            <h2 class="post-title">{{ post.title }}</h2>
+            <p class="post-subtitle">{{ post.subtitle }}</p>
+            <div class="post-meta">
+                <span>{{ post.date }}</span>
+                <span>&#x1F44D; {{ post.likes }}</span>
+                <span>&#x1F4AC; {{ post.comments }}</span>
+                <span class="bookmark-icon" data-bookmarked="false">&#x1F516;</span>
+            </div>
+        </div>
+        <div class="post-image">
+            <img src="{{ post.image_url }}" alt="Post Image">
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.bookmark-icon').forEach(function(bookmarkIcon) {
+        bookmarkIcon.addEventListener('click', function() {
+            const postContainer = this.closest('.post-container');
+            const postId = postContainer.getAttribute('data-post-id');
+            const bookmarked = this.getAttribute('data-bookmarked') === 'true';
+
+            fetch(`/bookmark/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId, bookmarked: !bookmarked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.setAttribute('data-bookmarked', !bookmarked);
+                    this.style.color = !bookmarked ? 'gold' : 'black';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

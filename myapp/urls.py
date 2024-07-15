@@ -4,7 +4,7 @@ from myapp import views
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
-                  path('', views.base, name='base'),
+                  path('', views.home, name='home'),
                   path('create_post/', views.create_post, name='create_post'),
                   path('post/<int:post_id>/', views.view_post, name='view_post'),
                   path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),

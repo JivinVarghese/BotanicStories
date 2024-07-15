@@ -78,3 +78,74 @@ def comments(request):
         form = CommentForm()
 
     return render(request, 'comment.html', {'form': form})
+
+# def home(request):
+#     # Fetch posts from the database, ordered by creation date (newest first)
+#     posts = Post.objects.order_by('-created_at')[:10]  # Limit to 10 most recent posts
+#
+#     # Prepare the data for the template
+#     post_data = []
+#     for post in posts:
+#         post_info = {
+#             'id': post.post_id,
+#             'user_name': post.user.username,
+#             'user_image': post.user.profile.image.url if hasattr(post.user, 'profile') and post.user.profile.image else None,
+#             'title': post.title,
+#             'subtitle': post.subtitle,
+#             'likes': post.likes.count(),
+#             'comments': post.comments.count(),
+#             'date': post.created_at.strftime('%b %d'),  # Format date as 'May 30'
+#             'tags': list(post.tags.values_list('tag_name', flat=True)),
+#             'image_url': post.image.url if post.image else None
+#         }
+#         post_data.append(post_info)
+#
+#     return render(request, 'home.html', {'posts': post_data})
+
+
+# ...................................
+# temporary view for home is below
+# ...................................
+
+def home(request):
+    # Dummy content
+    posts = [
+        {
+            'id': 1,
+            'user_name': 'Malhar Raval',
+            'user_image': None,  # Add image URL here if available
+            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
+            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
+            'likes': 1100,
+            'comments': 34,
+            'date': 'May 30',
+            'tags': ['Entrepreneurship', 'Startup', 'VC'],
+            'image_url': '/static/images/1.jpg'  # Make sure to place your image in the static/images directory
+        },
+        {
+            'id': 2,
+            'user_name': 'Harsh Sachala',
+            'user_image': None,
+            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
+            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
+            'likes': 44,
+            'comments': 3,
+            'date': 'April 23',
+            'tags': ['Fundraising', 'Innovation'],
+            'image_url': '/static/images/2.jpg'
+        },
+        {
+            'id': 3,
+            'user_name': 'Akshar Patel',
+            'user_image': None,
+            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
+            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
+            'likes': 222121,
+            'comments': 3444,
+            'date': 'May 10',
+            'tags': ['Pitching', 'Business'],
+            'image_url': '/static/images/3.jpg'
+        },
+        # Add more posts here
+    ]
+    return render(request, 'home.html', {'posts': posts})
