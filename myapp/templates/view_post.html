@@ -53,39 +53,6 @@
         </div>
     </div>
 </div>
-{#<div id="mySidenav" class="sidenav">#}
-{#    <span class="closebtn" onclick="closeNav2()">&times;</span>#}
-{#    <div class="header">#}
-{#        <h4>Responses (1)</h4>#}
-{#    </div>#}
-{#    <div class="add-comment">#}
-{#        <form method="post">#}
-{#            {% csrf_token %}#}
-{#            {{ form.comment_text }}#}
-{#            <button type="submit" class="btn btn-primary" >Comment</button>#}
-{#        </form>#}
-{#    </div>#}
-{#    <div class="comment-section">#}
-{#        <div class="comment">#}
-{#            <div class="avatar">BJ</div>#}
-{#            <div class="comment-body">#}
-{#                <h5>#}
-{#                    Brijitjoffy#}
-{#                    <div class="dropdown">#}
-{#                        <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>#}
-{#                        <div class="dropdown-content">#}
-{#                            <a href="#">Edit</a>#}
-{#                            <a href="#">Delete</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </h5>#}
-{#                <div class="time">less than a minute ago</div>#}
-{#                <p>Nice article, but how would you decompress this?</p>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#</div>#}
 <div id="mySidenav" class="sidenav">
     <span class="closebtn" onclick="closeNav2()">&times;</span>
     <div class="header">
@@ -111,7 +78,13 @@
                             <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
                             <div class="dropdown-content">
                                 <a href="#">Edit</a>
-                                <a href="#">Delete</a>
+{#                                <a href="#">Delete</a>#}
+                                {% if request.user == comment.user or request.user.is_staff %}
+                                <a href="#" class="delete-comment-link" data-comment-id="{{ comment.comment_id }}">Delete</a>
+                                <form id="delete-comment-{{ comment.comment_id }}" action="{% url 'delete_comment' post.post_id comment.comment_id %}" method="POST" style="display: none;">
+                                    {% csrf_token %}
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                     </h5>
@@ -365,6 +338,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function closeNav2() {
         document.getElementById("mySidenav").style.width = "0";
     }
+</script>
+{#script to delete#}
+    <script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    const deleteLinks = document.querySelectorAll('.delete-comment-link');
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const commentId = link.getAttribute('data-comment-id');
+            const form = document.getElementById(`delete-comment-${commentId}`);
+            form.submit();
+        });
+    });
+});
 </script>
 <!-- Include FontAwesome for the ellipsis icon -->
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>

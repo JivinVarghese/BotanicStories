@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .forms import *
 from .models import *
 
@@ -159,3 +160,17 @@ def home(request):
         # Add more posts here
     ]
     return render(request, 'home.html', {'posts': posts})
+
+
+@login_required
+def delete_comment(request, post_id, comment_id):
+    comment = get_object_or_404(Comment, comment_id=comment_id)
+
+    if request.user == comment.user or request.user.is_staff:
+        if request.method == 'POST':
+            comment.delete()
+            messages.success(request, 'Comment deleted successfully.')
+        return redirect('view_post', post_id=comment.post.post_id)
+    else:
+        messages.error(request, 'You do not have permission to delete this comment.')
+        return redirect('view_post', post_id=comment.post.post_id)
