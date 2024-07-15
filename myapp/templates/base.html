@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    {% csrf_token %}
     <div id="mySidebar" class="sidebar">
+        {% if user.is_authenticated %}
+        	Hello {{ request.user }}
+        {% endif %}
         <a href="#">Profile</a>
         <a href="#">Library</a>
         <a href="#">Stories</a>
@@ -42,9 +46,31 @@
                             <span class="write-icon">&#x270E;</span> Write
                         </a>
                     </li>
+                    {% if not user.is_authenticated %}
+
+                        <li class="nav-item">
+                        <a class="nav-link" href="/register/">
+                            Register
+                        </a>
+                    </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/login/">
+                            Login
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout/">
+                            Logout
+                        </a>
+                    </li>
+                        <li class="nav-item">
                         <span class="nav-link profile-icon" onclick="openNav()">&#x1F464;</span>
                     </li>
+                    {% endif %}
+
+
+
                 </ul>
             </div>
         </nav>
