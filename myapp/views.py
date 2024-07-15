@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .forms import *
+from .models import *
 
 
 # Create your views here.
@@ -31,9 +33,16 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 
+@login_required
 def view_post(request, post_id):
+    form = CommentForm(request.POST)
     if request.method == 'POST':
-        return redirect('create_post')  # Prevents re-posting on refresh
+        comment = form.save(commit=False)
+        comment.post = get_object_or_404(Post, post_id=post_id)
+        comment.user = request.user  # Assigns the current logged-in user to the comment
+        comment.save()
+        return redirect('view_post', post_id=post_id)  # Prevents re-posting on refresh
+        # return redirect('create_post')  # Prevents re-posting on refresh
 
     try:
         post = Post.objects.get(post_id=post_id)
@@ -41,7 +50,8 @@ def view_post(request, post_id):
     except Post.DoesNotExist:
         return redirect('create_post')  # Redirect to create_post if post not found
 
-    return render(request, 'view_post.html', {'post': post, 'tags': tags})
+    all_comments = Comment.objects.filter(post=post).order_by('-created_time')
+    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments})
 
 
 def edit_post(request, post_id):
