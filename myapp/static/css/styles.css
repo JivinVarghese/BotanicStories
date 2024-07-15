@@ -110,3 +110,119 @@ body, html {
 .write-icon {
     margin-right: 1px;
 }
+
+
+/*homepage*/
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.post-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.post-content {
+    width: 75%;
+}
+
+.post-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.post-subtitle {
+    font-size: 16px;
+    color: #555;
+}
+
+.post-meta {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.post-meta span {
+    margin-right: 15px;
+}
+
+.bookmark-icon {
+    float: right;
+}
+
+.post-image img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-initial {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.tags {
+    display: flex;
+    align-items: center;
+}
+
+.tag {
+    background-color: #e7e7e7;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.post-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
