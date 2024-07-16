@@ -77,7 +77,8 @@
                         <div class="dropdown">
                             <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
                             <div class="dropdown-content">
-                                <a href="#">Edit</a>
+{#                                <a href="#">Edit</a>#}
+                                <a href="#" class="edit-comment-link" data-comment-id="{{ comment.comment_id }}" data-comment-text="{{ comment.comment_text }}">Edit</a>
 {#                                <a href="#">Delete</a>#}
                                 {% if request.user == comment.user or request.user.is_staff %}
                                 <a href="#" class="delete-comment-link" data-comment-id="{{ comment.comment_id }}">Delete</a>
@@ -94,6 +95,17 @@
             </div>
         {% endfor %}
     </div>
+<!-- Modal for editing comments -->
+<div id="editCommentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="edit-comment-form" method="post">
+            {% csrf_token %}
+            <textarea id="edit-comment-text" name="comment_text" rows="3" class="form-control" placeholder="Edit your comment..."></textarea>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+    </div>
+</div>
 </div>
 <style>
 /* General styles */
@@ -310,6 +322,61 @@ header nav ul li a {
         border: none;
         margin-top: auto; /* Push the button to the bottom */
     }
+
+    /* Modal styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 3; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto; /* 10% from the top and centered */
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        width: 80%; /* Could be more or less, depending on screen size */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .modal .close:hover,
+    .modal .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal .form-control {
+        border: 0;
+        resize: none;
+        box-shadow: none;
+        flex: 1;
+        margin-bottom: 10px;
+    }
+
+    .modal .btn {
+        align-self: flex-end;
+        border-radius: 30px;
+        background-color: #33691E;
+        border: none;
+        margin-top: auto; /* Push the button to the bottom */
+    }
 </style>
 <script>
 // Toggle dropdown menu
@@ -354,6 +421,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const editLinks = document.querySelectorAll('.edit-comment-link');
+    const modal = document.getElementById('editCommentModal');
+    const closeModal = document.querySelector('.modal .close');
+    const editForm = document.getElementById('edit-comment-form');
+    const editTextArea = document.getElementById('edit-comment-text');
+
+    editLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const postId = '{{ post.post_id }}';  // Get the post_id from the context
+            const commentId = link.getAttribute('data-comment-id');
+            const commentText = link.getAttribute('data-comment-text');
+            editTextArea.value = commentText;
+            editForm.action = `/post/${postId}/comment/${commentId}/edit/`;
+            modal.style.display = 'block';
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
+
 <!-- Include FontAwesome for the ellipsis icon -->
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
 {#end of script for comment section#}

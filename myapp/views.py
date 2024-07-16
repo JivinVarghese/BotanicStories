@@ -7,7 +7,6 @@ from .models import *
 
 # Create your views here.
 
-
 def base(request):
     return render(request, 'base.html')
 
@@ -174,3 +173,17 @@ def delete_comment(request, post_id, comment_id):
     else:
         messages.error(request, 'You do not have permission to delete this comment.')
         return redirect('view_post', post_id=comment.post.post_id)
+
+
+@login_required
+def edit_comment(request, post_id, comment_id):
+    comment = get_object_or_404(Comment, comment_id=comment_id, post_id=post_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Comment updated successfully')
+            return redirect('view_post', post_id=post_id)
+        else:
+            messages.error(request, 'There was an error updating your comment')
