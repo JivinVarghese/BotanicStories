@@ -89,6 +89,7 @@ def comments(request):
 
     return render(request, 'comment.html', {'form': form})
 
+
 # def home(request):
 #     # Fetch posts from the database, ordered by creation date (newest first)
 #     posts = Post.objects.order_by('-created_at')[:10]  # Limit to 10 most recent posts
@@ -164,8 +165,8 @@ def home(request):
 @login_required
 def delete_comment(request, post_id, comment_id):
     comment = get_object_or_404(Comment, comment_id=comment_id)
-
-    if request.user == comment.user or request.user.is_staff:
+    # if request.user == comment.user or request.user.is_staff:
+    if request.user == comment.user:
         if request.method == 'POST':
             comment.delete()
             messages.success(request, 'Comment deleted successfully.')
@@ -178,7 +179,6 @@ def delete_comment(request, post_id, comment_id):
 @login_required
 def edit_comment(request, post_id, comment_id):
     comment = get_object_or_404(Comment, comment_id=comment_id, post_id=post_id)
-
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():

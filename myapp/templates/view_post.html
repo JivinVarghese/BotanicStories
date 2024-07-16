@@ -74,6 +74,7 @@
                 <div class="comment-body">
                     <h5>
                         {{ comment.user.username }}
+                        {% if request.user == comment.user  %} 
                         <div class="dropdown">
                             <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
                             <div class="dropdown-content">
@@ -88,6 +89,7 @@
                                 {% endif %}
                             </div>
                         </div>
+                        {% endif %}
                     </h5>
                     <div class="time">{{ comment.created_time|timesince }} ago</div>
                     <p>{{ comment.comment_text }}</p>
