@@ -187,3 +187,37 @@ def edit_comment(request, post_id, comment_id):
             return redirect('view_post', post_id=post_id)
         else:
             messages.error(request, 'There was an error updating your comment')
+
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    user_detail = get_object_or_404(UserDetail, user=user)
+    context = {
+        'user': user,
+        'user_detail': user_detail
+    }
+    return render(request, 'user_profile.html', context)
+
+def about_user(request, username):
+    user = get_object_or_404(User, username=username)
+    user_detail = get_object_or_404(UserDetail, user=user)
+    context = {
+        'user': user,
+        'user_detail': user_detail
+    }
+    return render(request, 'about_user.html', context)
+
+@login_required
+def edit_profile(request):
+    user_detail = UserDetail.objects.get(user=User.objects.get(id = request.user.id))
+    if request.method == 'POST':
+        form = UserDetailForm(request.POST, request.FILES, instance=user_detail)
+        if form.is_valid():
+            form.save()
+            # Update user's name if changed
+            request.user.username = request.POST['name']
+            request.user.save()
+            # return redirect('user_profile', username=request.user.username)
+    else:
+        form = UserDetailForm(instance=user_detail)
+    return render(request, 'edit_profile.html', {'form': form, 'user_detail': user_detail})
+
