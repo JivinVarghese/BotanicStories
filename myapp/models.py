@@ -50,4 +50,4 @@ class Bookmark(models.Model):
 class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    tag_name = models.CharField(max_length=50)
+    tag_name = models.CharField(max_length=50, db_index=True)

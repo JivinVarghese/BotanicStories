@@ -15,5 +15,6 @@ urlpatterns = [
                   path('profile/edit_profile/', views.edit_profile, name='edit_profile'),
                   path('profile/<str:username>/', views.user_profile, name='user_profile'),
                   path('profile/<str:username>/about/', views.about_user, name='about_user'),
+                  path('search/', views.search_posts, name='search_posts'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
