@@ -204,20 +204,20 @@ def about_user(request, username):
         'user': user,
         'user_detail': user_detail
     }
+    print(user_detail.profile_pic)
     return render(request, 'about_user.html', context)
+
 
 @login_required
 def edit_profile(request):
-    user_detail = UserDetail.objects.get(user=User.objects.get(id = request.user.id))
+    user_detail = UserDetail.objects.get(user=request.user)
     if request.method == 'POST':
         form = UserDetailForm(request.POST, request.FILES, instance=user_detail)
         if form.is_valid():
             form.save()
-            # Update user's name if changed
             request.user.username = request.POST['name']
             request.user.save()
-            # return redirect('user_profile', username=request.user.username)
+            return redirect('user_profile', username=request.user.username)
     else:
         form = UserDetailForm(instance=user_detail)
     return render(request, 'edit_profile.html', {'form': form, 'user_detail': user_detail})
-
