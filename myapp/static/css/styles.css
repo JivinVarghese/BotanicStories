@@ -226,3 +226,240 @@ body {
     padding: 10px 0;
     margin-bottom: 20px;
 }
+
+/* Profile picture styling */
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Username styling */
+.username {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 43%;
+}
+
+/* Edit Profile button styling */
+.btn-edit-profile {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.btn-edit-profile:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Nav tabs styling */
+.nav-tabs {
+    border-bottom: none;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #000000;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 2px solid #000000;
+    color: #000000;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    position: relative;
+    padding-top: 60px; /* Added padding to account for the button */
+}
+
+.card-title {
+    font-size: 1.25rem;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+/* General text alignment */
+.text-center h3, .text-center h4 {
+    margin-top: 20px;
+}
+
+.text-center ul {
+    padding-left: 0;
+}
+
+/* About section */
+.about-section {
+    margin-top: 20px;
+}
+
+.about-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.about-section p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.about-section h4 {
+    font-size: 1.4rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.details-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.details-list li {
+    margin-bottom: 5px;
+}
+
+.form-group label {
+        font-weight: bold;
+    }
+    .form-control {
+        margin-top: 0.5rem;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .rounded-circle {
+        display: block;
+        margin: 0 auto;
+    }
+
+/*.tell-section {*/
+/*    background-color: #f8f9fa;*/
+/*    padding: 20px;*/
+/*    border-radius: 8px;*/
+/*}*/
+
+/*.tell-section h4 {*/
+/*    font-size: 1.5rem;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+/*.tell-section p {*/
+/*    line-height: 1.6;*/
+/*    margin-bottom: 15px;*/
+/*}*/
+
+/*#editBioForm {*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*#editBioForm textarea {*/
+/*    width: 100%;*/
+/*    resize: vertical;*/
+/*}*/
+
+/*#editBioForm .btn {*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 1rem;
+    }
+
+    .btn-edit-profile {
+        font-size: 0.875rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /*.tell-section {*/
+    /*    padding: 15px;*/
+    /*}*/
+
+    /*.tell-section h4 {*/
+    /*    font-size: 1.3rem;*/
+    /*}*/
+
+    /*.tell-section p {*/
+    /*    font-size: 0.9rem;*/
+    /*}*/
+}
+
+@media (max-width: 400px) {
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-pic {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-text {
+        font-size: 0.875rem;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 0.875rem;
+    }
+
+    .btn-edit-profile {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+/*end of  profile picture css*/

@@ -25,3 +25,13 @@ class PostForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'image-input'}),
             'tags': forms.TextInput(attrs={'class': 'tags-input', 'placeholder': 'Add tags...'}),
         }
+
+class UserDetailForm(forms.ModelForm):
+    class Meta:
+        model = UserDetail
+        fields = ['profile_pic', 'bio', 'location', 'interests', 'date_of_birth']
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'interests': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }

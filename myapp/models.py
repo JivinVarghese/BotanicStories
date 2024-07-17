@@ -11,6 +11,11 @@ class UserDetail(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=100, blank=True)
     interests = models.TextField(blank=True)
+    # pronouns = models.CharField(max_length=4, blank=True)
+
+    # def __str__(self):
+    #     return self.user.username
+
 
 
 class Post(models.Model):

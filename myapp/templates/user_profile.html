@@ -1,0 +1,108 @@
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{#<div class="container mt-5">#}
+{#    <div class="row justify-content-center">#}
+{#        <div class="col-md-8 text-center">#}
+{#            <div class="profile-picture">#}
+{#                    <img src="https://picsum.photos/300/300" class="rounded-circle profile-pic" alt="Profile Picture">#}
+{#            </div>#}
+{#            <div class="d-flex justify-content-between align-items-center mt-3">#}
+{#                <h2 class="username">{{ user.username }}</h2>#}
+{#                <a href="{% url 'edit_profile' %}" class="btn btn-edit-profile">Edit Profile</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="row justify-content-center mt-5">#}
+{#        <div class="col-md-8">#}
+{#            <ul class="nav nav-tabs justify-content-center" id="profileTabs" role="tablist">#}
+{#                <li class="nav-item" role="presentation">#}
+{#                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>#}
+{#                </li>#}
+{#                <li class="nav-item" role="presentation">#}
+{#                    <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="false">About</a>#}
+{#                </li>#}
+{#            </ul>#}
+{#            <div class="tab-content mt-3" id="profileTabsContent">#}
+{#                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">#}
+{#                    <div class="card">#}
+{#                        <div class="card-body">#}
+{#                            <h5 class="card-title">Reading List</h5>#}
+{#                            <p class="card-text">No stories</p>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">#}
+{#                    <h3>About</h3>#}
+{#                    <p>{{ user_detail.bio }}</p>#}
+{#                    <h4>Details</h4>#}
+{#                    <ul class="list-unstyled">#}
+{#                        <li><strong>Date of Birth:</strong> {{ user_detail.date_of_birth }}</li>#}
+{#                        <li><strong>Location:</strong> {{ user_detail.location }}</li>#}
+{#                        <li><strong>Interests:</strong> {{ user_detail.interests }}</li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#{% endblock %}#}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="profile-picture">
+                <img src="https://picsum.photos/300/300" class="rounded-circle profile-pic" alt="Profile Picture">
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <h2 class="username">{{ user.username }}</h2>
+                <a href="{% url 'edit_profile' %}" class="btn btn-edit-profile">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <ul class="nav nav-tabs justify-content-center" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                </li>
+{#                <li class="nav-item" role="presentation">#}
+{#                    <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="false">About</a>#}
+{#                </li>#}
+{#            </ul>#}
+{#            <div class="tab-content mt-3" id="profileTabsContent">#}
+{#                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">#}
+{#                    <!-- Home tab content -->#}
+{#                </div>#}
+{#                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">#}
+{#                    <h3>About</h3>#}
+{#                    <p>{{ user_detail.bio }}</p>#}
+{#                    <h4>Details</h4>#}
+{#                    <ul class="list-unstyled">#}
+{#                        <li><strong>Date of Birth:</strong> {{ user_detail.date_of_birth }}</li>#}
+{#                        <li><strong>Location:</strong> {{ user_detail.location }}</li>#}
+{#                        <li><strong>Interests:</strong> {{ user_detail.interests }}</li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="about-tab" href="{% url 'about_user' user.username %}" role="tab" aria-controls="about" aria-selected="false">About</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-3" id="profileTabsContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Reading List</h5>
+                            <p class="card-text">No stories</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
