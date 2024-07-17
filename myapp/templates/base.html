@@ -7,6 +7,32 @@
     <title>BotanicStories</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .search-container {
+    position: relative;
+}
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+
+    .search-dropdown .dropdown-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+    .search-dropdown .dropdown-item:hover {
+        background: #f0f0f0;
+    }
+    </style>
 </head>
 <body>
     <div id="mySidebar" class="sidebar">
@@ -16,7 +42,6 @@
         <a href="#">Stats</a>
         <a href="#">Settings</a>
         <a href="#">Help</a>
-        <!-- Add other sidebar links here -->
     </div>
 
     <div id="main">
@@ -28,12 +53,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <form class="form-inline my-2 my-lg-0">
-                            <div class="search-bar">
-                                <span class="search-icon">&#x1F50D;</span>
-                                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                            </div>
-                        </form>
+{#                        <form class="form-inline my-2 my-lg-0" onsubmit="return false;">#}
+{#                            <div class="search-bar">#}
+{#                                <span class="search-icon">&#x1F50D;</span>#}
+{#                                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput">#}
+{#                            </div>#}
+{#                        </form>#}
+                        <div class="search-container">
+                            <form class="form-inline my-2 my-lg-0" onsubmit="return false;">
+                                <div class="search-bar">
+                                    <span class="search-icon">&#x1F50D;</span>
+                                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput">
+                                </div>
+                            </form>
+                            <div id="searchDropdown" class="search-dropdown"></div>
+                        </div>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -49,13 +83,12 @@
             </div>
         </nav>
 
-        <!-- Content placeholder for other templates to extend -->
         {% block content %}
         {% endblock %}
     </div>
 
     <div id="overlay" class="overlay" onclick="closeNav()"></div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function openNav() {
             document.getElementById("mySidebar").style.width = "250px";
@@ -75,6 +108,59 @@
                 closeNav();
             }
         });
+     document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const dropdown = document.getElementById('searchDropdown');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value;
+        if (query.length > 1) {
+            fetch(`/search/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    dropdown.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const option = document.createElement('div');
+                            option.className = 'dropdown-item';
+                            option.textContent = item.post_title;
+                            option.onclick = function() {
+                                window.location.href = `/post/${item.post_id}/`;
+                            };
+                            dropdown.appendChild(option);
+                        });
+                        dropdown.style.display = 'block';
+                    } else {
+                        dropdown.style.display = 'none';
+                    }
+                });
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const firstResult = dropdown.querySelector('.dropdown-item');
+            if (firstResult) {
+                firstResult.click();
+            }
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!searchInput.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    searchInput.addEventListener('focus', function() {
+        if (dropdown.innerHTML !== '') {
+            dropdown.style.display = 'block';
+        }
+    });
+});
     </script>
 </body>
 </html>

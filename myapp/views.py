@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import *
 from .models import *
-
+from django.http import JsonResponse
+from django.db.models import Q
 
 # Create your views here.
 
@@ -221,3 +222,14 @@ def edit_profile(request):
     else:
         form = UserDetailForm(instance=user_detail)
     return render(request, 'edit_profile.html', {'form': form, 'user_detail': user_detail})
+
+
+def search_posts(request):
+    if 'q' in request.GET:
+        query = request.GET.get('q')
+        print('query ,',query)
+        results = Post.objects.filter(Q(post_title__icontains=query) | Q(tag__tag_name__icontains=query)).distinct()
+        data = [{'post_id': post.post_id, 'post_title': post.post_title} for post in results]
+        print("data",data)
+        return JsonResponse(data, safe=False)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
