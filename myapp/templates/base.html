@@ -10,7 +10,7 @@
 </head>
 <body>
     <div id="mySidebar" class="sidebar">
-        <a href="#">Profile</a>
+        <a href="{% url 'user_profile' user.username %}">Profile</a>
         <a href="#">Library</a>
         <a href="#">Stories</a>
         <a href="#">Stats</a>

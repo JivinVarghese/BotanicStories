@@ -255,13 +255,14 @@ body {
 
 /* Edit Profile button styling */
 .btn-edit-profile {
-    background-color: #007bff;
     color: white;
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 5px;
+    align-self: flex-end;
+    border-radius: 30px;
+    background-color: #33691E;
+    margin-top: auto;
     font-size: 1rem;
-    text-transform: uppercase;
     transition: background-color 0.3s ease;
     position: absolute;
     right: 15px;
@@ -269,8 +270,16 @@ body {
 }
 
 .btn-edit-profile:hover {
-    background-color: #0056b3;
+    background-color: #33691E;
     color: white;
+}
+
+.profile-page-button {
+    align-self: flex-end;
+    border-radius: 30px;
+    background-color: #33691E;
+    border: none;
+    margin-top: auto;
 }
 
 /* Nav tabs styling */
@@ -298,7 +307,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     position: relative;
-    padding-top: 60px; /* Added padding to account for the button */
 }
 
 .card-title {
@@ -355,11 +363,13 @@ body {
         margin-top: 0.5rem;
     }
     .btn-primary {
-        background-color: #007bff;
+        background-color: #33691E;
+        border-radius: 30px;
         border: none;
     }
     .btn-secondary {
         background-color: #6c757d;
+        border-radius: 30px;
         border: none;
     }
     .card-title {
