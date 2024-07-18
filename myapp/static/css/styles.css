@@ -473,3 +473,29 @@ body {
     }
 }
 /*end of  profile picture css*/
+
+/*start of base.html search box css*/
+.search-container {
+    position: relative;
+}
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+.search-dropdown .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+.search-dropdown .dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+/* end of base.html search box css*/
