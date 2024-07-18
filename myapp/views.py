@@ -191,7 +191,7 @@ def edit_comment(request, post_id, comment_id):
 
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
-    user_detail = get_object_or_404(UserDetail, user=user)
+    user_detail, created = UserDetail.objects.get_or_create(user=user)
     context = {
         'user': user,
         'user_detail': user_detail
@@ -200,12 +200,11 @@ def user_profile(request, username):
 
 def about_user(request, username):
     user = get_object_or_404(User, username=username)
-    user_detail = get_object_or_404(UserDetail, user=user)
+    user_detail, created = UserDetail.objects.get_or_create(user=user)
     context = {
         'user': user,
         'user_detail': user_detail
     }
-    print(user_detail.profile_pic)
     return render(request, 'about_user.html', context)
 
 
