@@ -34,7 +34,7 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 
-@login_required
+# @login_required
 def view_post(request, post_id):
     form = CommentForm(request.POST)
     if request.method == 'POST':
