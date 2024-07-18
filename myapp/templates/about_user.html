@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8 text-center">
             <div class="profile-picture">
-                {% if user_detail.profile_pic.url %}
+                {% if user_detail.profile_pic %}
                     <img src="{{ user_detail.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture">
                 {% else %}
-                    <img src="https://via.placeholder.com/300" class="rounded-circle profile-pic" alt="Profile Picture">
+                    <img src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU" class="rounded-circle profile-pic" alt="Profile Picture">
                 {% endif %}
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
