@@ -58,6 +58,7 @@
     <div class="header">
         <h4>Responses ({{ comments|length }})</h4>
     </div>
+    {% if request.user.is_authenticated %}
     <div class="add-comment">
         <form method="post">
 {#        <form id="comment-form" method="post" action="{% url 'view_post' post.post_id %}">#}
@@ -67,34 +68,41 @@
             <button type="submit" class="btn btn-primary">Comment</button>
         </form>
     </div>
+    {% endif %}
     <div class="comment-section">
         {% for comment in comments %}
             <div class="comment">
-                <div class="avatar">{{ comment.user.username|slice:":2"|upper }}</div>
-                <div class="comment-body">
-                    <h5>
-                        {{ comment.user.username }}
-                        {% if request.user == comment.user  %} 
-                        <div class="dropdown">
-                            <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
-                            <div class="dropdown-content">
-{#                                <a href="#">Edit</a>#}
-                                <a href="#" class="edit-comment-link" data-comment-id="{{ comment.comment_id }}" data-comment-text="{{ comment.comment_text }}">Edit</a>
-{#                                <a href="#">Delete</a>#}
-                                {% if request.user == comment.user or request.user.is_staff %}
-                                <a href="#" class="delete-comment-link" data-comment-id="{{ comment.comment_id }}">Delete</a>
-                                <form id="delete-comment-{{ comment.comment_id }}" action="{% url 'delete_comment' post.post_id comment.comment_id %}" method="POST" style="display: none;">
-                                    {% csrf_token %}
-                                </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    </h5>
-                    <div class="time">{{ comment.created_time|timesince }} ago</div>
-                    <p>{{ comment.comment_text }}</p>
-                </div>
+            <div class="avatar">
+                {% if comment.get_profile_img %}
+                    <img src="{{ comment.get_profile_img }}" alt="{{ comment.user.username }}" class="avatar-img" style="height: 100%; width: 100%;border-radius: 50%">
+                {% else %}
+                    {{ comment.user.username|slice:":2"|upper }}
+                {% endif %}
             </div>
+            <div class="comment-body">
+                <h5>
+                    {{ comment.user.username }}
+                    {% if request.user == comment.user  %}
+                    <div class="dropdown">
+                        <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        <div class="dropdown-content">
+{#                                <a href="#">Edit</a>#}
+                            <a href="#" class="edit-comment-link" data-comment-id="{{ comment.comment_id }}" data-comment-text="{{ comment.comment_text }}">Edit</a>
+{#                                <a href="#">Delete</a>#}
+                            {% if request.user == comment.user or request.user.is_staff %}
+                            <a href="#" class="delete-comment-link" data-comment-id="{{ comment.comment_id }}">Delete</a>
+                            <form id="delete-comment-{{ comment.comment_id }}" action="{% url 'delete_comment' post.post_id comment.comment_id %}" method="POST" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </h5>
+                <div class="time">{{ comment.created_time|timesince }} ago</div>
+                <p>{{ comment.comment_text }}</p>
+            </div>
+        </div>
         {% endfor %}
     </div>
 <!-- Modal for editing comments -->

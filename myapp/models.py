@@ -34,6 +34,13 @@ class Comment(models.Model):
     created_time = models.DateTimeField(default=timezone.now)
     updated_time = models.DateTimeField(auto_now=True)
 
+    def get_profile_img(self):
+        try:
+            url = UserDetail.objects.filter(user=self.user).first().profile_pic.url
+        except:
+            url = None
+        return url
+
 
 class Like(models.Model):
     like_id = models.AutoField(primary_key=True)
