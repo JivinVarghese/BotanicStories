@@ -232,3 +232,6 @@ def search_posts(request):
         print("data",data)
         return JsonResponse(data, safe=False)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def landing_page(request):
+    return render(request, 'landing_page.html')
