@@ -103,12 +103,17 @@ def generate_post_data(posts, user):
     post_data = []
     for post in posts:
         tags = Tag.objects.filter(post=post).values_list('tag_name', flat=True)
+
+        user_detail = UserDetail.objects.filter(user=post.user).first()
+        user_image = user_detail.profile_pic.url if user_detail and user_detail.profile_pic else None
+
         post_data.append({
             'id': post.post_id,
             'user_name': post.user.username,
-            'user_image': None,
+            'user_image': user_image,
             'title': post.post_title,
             'subtitle': post.content[:400],
+            'date' : post.create_date,
             'tags': list(tags),
             'image_url': post.image.url if post.image else '/static/images/default.jpg',
             'bookmarked': post.post_id in user_bookmarks,
@@ -117,33 +122,12 @@ def generate_post_data(posts, user):
         })
     return post_data
 
+
 def home(request):
     posts = Post.objects.all()
     post_data = generate_post_data(posts, request.user)
     return render(request, 'home.html', {'posts': post_data})
 
-# @csrf_exempt
-# def bookmark_view(request):
-#     if request.method == 'POST':
-#         data = json.loads(request.body)
-#         post_id = data.get('post_id')
-#         action = data.get('action')
-#
-#         if not request.user.is_authenticated:
-#             return JsonResponse({'error': 'User not authenticated'}, status=403)
-#
-#         post = get_object_or_404(Post, post_id=post_id)
-#
-#         if action == 'add':
-#             # Add the bookmark
-#             Bookmark.objects.get_or_create(user=request.user, post=post)
-#             return JsonResponse({'status': 'added'})
-#         elif action == 'remove':
-#             # Remove the bookmark
-#             Bookmark.objects.filter(user=request.user, post=post).delete()
-#             return JsonResponse({'status': 'removed'})
-#
-#     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @csrf_exempt
 def bookmark_view(request):

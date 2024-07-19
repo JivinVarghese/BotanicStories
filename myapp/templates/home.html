@@ -25,7 +25,7 @@
             <h2 class="post-title">{{ post.title }}</h2>
             <p class="post-subtitle">{{ post.subtitle }}</p>
             <div class="post-meta">
-                <span>{{ post.date }}</span>
+                <span>{{ post.date | date:"F d, Y" }}</span>
                 <span>
                     <i class="fa-solid fa-heart like-icon remove-like"
                         style="color: #FF3040;"

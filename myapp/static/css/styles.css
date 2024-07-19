@@ -43,11 +43,6 @@
     color: #f1f1f1;
 }
 
-.profile-icon {
-    cursor: pointer;
-    margin-left: 10px;
-}
-
 body, html {
     overflow-x: hidden;
 }
@@ -114,6 +109,25 @@ body, html {
     margin-right: 1px;
 }
 
+.user-icon {
+    width: 30px;  /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    border-radius: 50%; /* Makes the image circular */
+    margin-right: 8px; /* Space between image and username */
+}
+
+.user-initial {
+    width: 30px;  /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    background-color: #007bff; /* Background color for initials */
+    color: white; /* Text color */
+    border-radius: 50%; /* Makes the initials circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 8px; /* Space between initials and username */
+}
 
 /*homepage*/
 
