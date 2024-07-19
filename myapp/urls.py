@@ -18,5 +18,6 @@ urlpatterns = [
                   path('search/', views.search_posts, name='search_posts'),
                   path('bookmark/', views.bookmark_view, name='bookmark'),
                   path('like/', views.like_view, name='like_view'),
+                  path('about/', views.about, name='about'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
