@@ -16,13 +16,18 @@ class UserDetail(models.Model):
         return self.user.username
 
 
-
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
     post_title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='post_images/', blank=True)
     content = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.post_title
+
+    def bookmarked(self):
+        return Bookmark.objects.filter(post=self, user=self.user).exists()
 
 
 class Comment(models.Model):
@@ -57,3 +62,7 @@ class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     tag_name = models.CharField(max_length=50, db_index=True)
+
+    def __str__(self):
+        return self.tag_name
+

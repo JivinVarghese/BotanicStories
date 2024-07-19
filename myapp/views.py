@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
 from .forms import *
 from .models import *
 from django.http import JsonResponse
+import json
 from django.db.models import Q
+
 
 # Create your views here.
 
@@ -91,79 +95,73 @@ def comments(request):
     return render(request, 'comment.html', {'form': form})
 
 
-# def home(request):
-#     # Fetch posts from the database, ordered by creation date (newest first)
-#     posts = Post.objects.order_by('-created_at')[:10]  # Limit to 10 most recent posts
-#
-#     # Prepare the data for the template
-#     post_data = []
-#     for post in posts:
-#         post_info = {
-#             'id': post.post_id,
-#             'user_name': post.user.username,
-#             'user_image': post.user.profile.image.url if hasattr(post.user, 'profile') and post.user.profile.image else None,
-#             'title': post.title,
-#             'subtitle': post.subtitle,
-#             'likes': post.likes.count(),
-#             'comments': post.comments.count(),
-#             'date': post.created_at.strftime('%b %d'),  # Format date as 'May 30'
-#             'tags': list(post.tags.values_list('tag_name', flat=True)),
-#             'image_url': post.image.url if post.image else None
-#         }
-#         post_data.append(post_info)
-#
-#     return render(request, 'home.html', {'posts': post_data})
-
-
-# ...................................
-# temporary view for home is below
-# ...................................
+def generate_post_data(posts, user):
+    user_bookmarks = Bookmark.objects.filter(user=user).values_list('post_id', flat=True) if user.is_authenticated else []
+    post_data = []
+    for post in posts:
+        tags = Tag.objects.filter(post=post).values_list('tag_name', flat=True)
+        post_data.append({
+            'id': post.post_id,
+            'user_name': post.user.username,
+            'user_image': None,
+            'title': post.post_title,
+            'subtitle': post.content[:400],
+            'tags': list(tags),
+            'image_url': post.image.url if post.image else '/static/images/default.jpg',
+            'bookmarked': post.post_id in user_bookmarks
+        })
+    return post_data
 
 def home(request):
-    # Dummy content
-    posts = [
-        {
-            'id': 1,
-            'user_name': 'Malhar Raval',
-            'user_image': None,  # Add image URL here if available
-            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
-            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
-            'likes': 1100,
-            'comments': 34,
-            'date': 'May 30',
-            'tags': ['Entrepreneurship', 'Startup', 'VC'],
-            'image_url': '/static/images/1.jpg'  # Make sure to place your image in the static/images directory
-        },
-        {
-            'id': 2,
-            'user_name': 'Harsh Sachala',
-            'user_image': None,
-            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
-            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
-            'likes': 44,
-            'comments': 3,
-            'date': 'April 23',
-            'tags': ['Fundraising', 'Innovation'],
-            'image_url': '/static/images/2.jpg'
-        },
-        {
-            'id': 3,
-            'user_name': 'Akshar Patel',
-            'user_image': None,
-            'title': 'A Founder Who Just Raised a $3 Million Seed Round Showed Me the New Way Startups Are Pitching VCs',
-            'subtitle': 'The ideal structure for fundraising pitches is constantly changing, and the newest iteration has clearly arrived.',
-            'likes': 222121,
-            'comments': 3444,
-            'date': 'May 10',
-            'tags': ['Pitching', 'Business'],
-            'image_url': '/static/images/3.jpg'
-        },
-        # Add more posts here
-    ]
-    return render(request, 'home.html', {'posts': posts})
+    posts = Post.objects.all()
+    post_data = generate_post_data(posts, request.user)
+    return render(request, 'home.html', {'posts': post_data})
+
+# @csrf_exempt
+# def bookmark_view(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         post_id = data.get('post_id')
+#         action = data.get('action')
+#
+#         if not request.user.is_authenticated:
+#             return JsonResponse({'error': 'User not authenticated'}, status=403)
+#
+#         post = get_object_or_404(Post, post_id=post_id)
+#
+#         if action == 'add':
+#             # Add the bookmark
+#             Bookmark.objects.get_or_create(user=request.user, post=post)
+#             return JsonResponse({'status': 'added'})
+#         elif action == 'remove':
+#             # Remove the bookmark
+#             Bookmark.objects.filter(user=request.user, post=post).delete()
+#             return JsonResponse({'status': 'removed'})
+#
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def bookmark_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        action = data.get('action')
+
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'User not authenticated'}, status=403)
+
+        post = get_object_or_404(Post, post_id=post_id)
+
+        if action == 'add':
+            Bookmark.objects.get_or_create(user=request.user, post=post)
+            return JsonResponse({'status': 'added'})
+        elif action == 'remove':
+            Bookmark.objects.filter(user=request.user, post=post).delete()
+            return JsonResponse({'status': 'removed'})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-@login_required
 def delete_comment(request, post_id, comment_id):
     comment = get_object_or_404(Comment, comment_id=comment_id)
     # if request.user == comment.user or request.user.is_staff:
@@ -189,14 +187,21 @@ def edit_comment(request, post_id, comment_id):
         else:
             messages.error(request, 'There was an error updating your comment')
 
+
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
     user_detail, created = UserDetail.objects.get_or_create(user=user)
+
+    bookmarked_posts = Post.objects.filter(bookmark__user=user).distinct()
+    post_data = generate_post_data(bookmarked_posts, user)
+
     context = {
         'user': user,
-        'user_detail': user_detail
+        'user_detail': user_detail,
+        'posts': post_data
     }
     return render(request, 'user_profile.html', context)
+
 
 def about_user(request, username):
     user = get_object_or_404(User, username=username)
@@ -226,9 +231,9 @@ def edit_profile(request):
 def search_posts(request):
     if 'q' in request.GET:
         query = request.GET.get('q')
-        print('query ,',query)
+        print('query ,', query)
         results = Post.objects.filter(Q(post_title__icontains=query) | Q(tag__tag_name__icontains=query)).distinct()
         data = [{'post_id': post.post_id, 'post_title': post.post_title} for post in results]
-        print("data",data)
+        print("data", data)
         return JsonResponse(data, safe=False)
     return JsonResponse({'error': 'Invalid request'}, status=400)

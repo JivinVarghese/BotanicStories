@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="container">
@@ -27,7 +28,12 @@
                 <span>{{ post.date }}</span>
                 <span>&#x1F44D; {{ post.likes }}</span>
                 <span>&#x1F4AC; {{ post.comments }}</span>
-                <span class="bookmark-icon" data-bookmarked="false">&#x1F516;</span>
+
+                <span class="bookmark-container">
+                <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
+                <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                </span>
+
             </div>
         </div>
         <div class="post-image">
@@ -37,30 +43,71 @@
     {% endfor %}
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.bookmark-icon').forEach(function(bookmarkIcon) {
-        bookmarkIcon.addEventListener('click', function() {
-            const postContainer = this.closest('.post-container');
-            const postId = postContainer.getAttribute('data-post-id');
-            const bookmarked = this.getAttribute('data-bookmarked') === 'true';
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.bookmark-container').forEach(container => {
+        container.addEventListener('click', (event) => {
+            event.stopPropagation();  // Prevent triggering the post click event
+            const addIcon = container.querySelector('.add-bookmark');
+            const removeIcon = container.querySelector('.remove-bookmark');
+            const postId = addIcon.getAttribute('data-id');
+            const action = addIcon.style.display === 'none' ? 'remove' : 'add';
 
-            fetch(`/bookmark/`, {
+            // Immediately toggle the icons for instant feedback
+            addIcon.style.display = action === 'add' ? 'none' : 'inline';
+            removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+            fetch('/bookmark/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+                    'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: JSON.stringify({ post_id: postId, bookmarked: !bookmarked })
+                body: JSON.stringify({ post_id: postId, action: action })
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    this.setAttribute('data-bookmarked', !bookmarked);
-                    this.style.color = !bookmarked ? 'gold' : 'black';
+                console.log('Success:', data);
+                if (data.status !== 'added' && data.status !== 'removed') {
+                    // If the server action failed, revert the icon change
+                    addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                    removeIcon.style.display = action === 'add' ? 'none' : 'inline';
                 }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // If there's an error, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
             });
         });
     });
+
+document.querySelectorAll('.post-container').forEach(container => {
+        container.addEventListener('click', (event) => {
+            // Prevent navigation if the click was on the bookmark button
+            if (event.target.classList.contains('bookmark-button')) {
+                return;
+            }
+
+            const postId = container.getAttribute('data-post-id');
+            window.location.href = `/post/${postId}/`;
+        });
+    });
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 {% endblock %}
