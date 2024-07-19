@@ -12,7 +12,9 @@
     {% csrf_token %}
     <div id="mySidebar" class="sidebar">
         {% if user.is_authenticated %}
-        	Hello {{ request.user }}
+        	<a>
+                Hi, {{ request.user }}
+            </a>
         {% endif %}
         <a href="#">Profile</a>
         <a href="#">Library</a>
