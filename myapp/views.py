@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import UserForm, UserDetailForm, CustomLoginForm
+from .decorators import redirect_authenticated_user
 
 # Create your views here.
 
@@ -26,7 +27,7 @@ def register(request):
             user_detail.user = user
             user_detail.save()
 
-            return redirect('home')  # or wherever you want to redirect after registration
+            return redirect('login')  # or wherever you want to redirect after registration
     else:
         user_form = UserForm()
         detail_form = UserDetailForm()
@@ -34,6 +35,7 @@ def register(request):
     return render(request, 'register.html', {'user_form': user_form, 'detail_form': detail_form})
 
 
+@redirect_authenticated_user
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(data=request.POST)

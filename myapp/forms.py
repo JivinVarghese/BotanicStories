@@ -6,14 +6,38 @@ from .models import UserDetail
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter password'
+        })
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm password'
+        })
+    )
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
         help_texts = {
             'username': None,
+        }
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter username'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter email'
+            }),
+            'password': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter password'
+            }),
         }
 
     def clean(self):
@@ -26,18 +50,39 @@ class UserForm(forms.ModelForm):
 
         return cleaned_data
 
-
 class UserDetailForm(forms.ModelForm):
     class Meta:
         model = UserDetail
         fields = ['bio', 'profile_pic', 'date_of_birth', 'location', 'interests']
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your bio'
+            }),
+            'profile_pic': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+            'date_of_birth': forms.DateInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'YYYY-MM-DD',
+                'type': 'date'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your location'
+            }),
+            'interests': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your interests'
+            }),
+        }
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Enter username'
+        'placeholder': 'Enter username',
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Enter password'
+        'placeholder': 'Enter password',
     }))
