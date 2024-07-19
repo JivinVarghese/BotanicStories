@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .about-page {
+            max-width: 1200px; /* Increase the max width for more spacing */
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Georgia', serif;
+            color: #333;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .about-page h1 {
+            font-size: 70px; /* 75% of 7em */
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .about-page p {
+            font-size: 21px; /* 75% of 3em */
+            margin-bottom: 20px;
+        }
+        .about-page footer {
+            margin-top: 40px;
+            font-size: 1.5em; /* 75% of 2em */
+            color: #777;
+            text-align: center; /* Center align the text in footer */
+        }
+    </style>
+    <div class="about-page">
+        <h1>Everyone has a story to tell.</h1>
+        <p>BotanicStories is an innovative and interactive web platform dedicated to promoting green and environmentally friendly practices through user-generated content.</p>
+        <p>This Django-based website serves as a community hub where users can share articles, stories, tips, and thoughts related to the environment, farming, gardening, recycling, and sustainable living.</p>
+        <p>Our goal is to foster a collaborative and educational space where users can exchange knowledge and inspire each other to adopt eco-friendly habits.</p>
+        <footer>
+            <p>&copy; 2024 BotanicStories. All rights reserved.</p>
+        </footer>
+    </div>
+{% endblock %}

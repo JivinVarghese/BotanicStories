@@ -245,3 +245,8 @@ def like_view(request):
             return JsonResponse({'status': 'removed', 'likes_count': post.likes_count()})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def about(request):
+    return render(request, 'about.html')
+
