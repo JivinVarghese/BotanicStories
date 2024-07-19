@@ -21,6 +21,7 @@ class Post(models.Model):
     post_title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='post_images/', blank=True)
     content = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)  # Add this line
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -20,7 +20,7 @@
                     {% endif %}
                     <div>
                         <span class="user-name">{{ post.user.username }}</span>
-                        <p class="text-muted"> 12 May 2024{{ post.create_date|date:"F d, Y" }}</p>
+                        <p class="text-muted"> {{ post.create_date|date:"F d, Y" }}</p>
                     </div>
                 </div>
                 <div class="tags">
