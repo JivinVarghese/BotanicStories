@@ -33,8 +33,39 @@
             <div class="interaction-buttons d-flex justify-content-between my-4">
                 <div class="post-meta">
                     <span>{{ post.create_date|date:"F d, Y" }}</span>
-                    <span>&#x1F44D; 3200{{ post.likes_count }}</span>
-                    <span onclick="openNav2()">&#x1F4AC; 52{{ post.comments_count }}</span>
+{#                    <span>&#x1F44D; 3200{{ post.likes_count }}</span>#}
+            <span class="like-container">
+            {% if request.user.is_authenticated %}
+                {% if not user_has_liked %}
+                <i class="fa-regular fa-heart like-icon add-like"
+                    data-id="{{ post.post_id }}"
+                    data-action="add"
+                >
+                </i>
+                {% else %}
+                <i class="fa-solid fa-heart like-icon remove-like"
+                    style="color: #FF3040;"
+                    data-id="{{ post.post_id }}"
+                    data-action="remove"
+
+                >
+                </i>
+                    {% endif %}
+                {% else %}
+                <i class="fa-solid fa-heart like-icon remove-like"
+                    style="color: #FF3040;"
+                    data-id="{{ post.post_id }}"
+                    data-action="remove"
+                >
+                </i>
+            {% endif %}
+                <span id="likes-count-{{ post.post_id }}">{{ post.likes_count }}</span>
+            </span>
+{#                    <span onclick="openNav2()">&#x1F4AC; 52{{ post.comments_count }}</span>#}
+                    <span class="comment-container" onclick="openNav2()">
+                        <i class="fa-regular fa-comment"></i>
+                        <span id="comments-count-{{ post.post_id }}">{{ post.comments_count }}</span>
+                    </span>
                     <span class="bookmark-container">
                         <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.post_id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
                         <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
@@ -230,7 +261,8 @@ header nav ul li a {
 {#.interaction-buttons .dropdown-menu {#}
 {#    right: 0;#}
 {#    left: auto;#}
-{#}#}
+{
+#}#}
 
 /* Post image */
 .img-fluid {
@@ -557,6 +589,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target == modal) {
             modal.style.display = 'none';
         }
+    });
+});
+</script>
+
+{#    like script#}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const likeButtons = document.querySelectorAll('.like-icon');
+
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.dataset.id;
+            const action = this.dataset.action;
+
+            fetch('{% url "like_view" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId, action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    document.querySelector(`.add-like[data-id="${postId}"]`).style.display = 'none';
+                    document.querySelector(`.remove-like[data-id="${postId}"]`).style.display = 'inline';
+                } else if (data.status === 'removed') {
+                    document.querySelector(`.add-like[data-id="${postId}"]`).style.display = 'inline';
+                    document.querySelector(`.remove-like[data-id="${postId}"]`).style.display = 'none';
+                }
+                document.getElementById(`likes-count-${postId}`).innerText = data.likes_count;
+                // Force a page reload
+            })
+            .catch(error => console.error('Error:', error));
+            window.location.reload();
+
+        });
     });
 });
 </script>

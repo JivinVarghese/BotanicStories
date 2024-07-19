@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class UserDetail(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
@@ -29,6 +28,12 @@ class Post(models.Model):
 
     def bookmarked(self):
         return Bookmark.objects.filter(post=self, user=self.user).exists()
+
+    def likes_count(self):
+        return Like.objects.filter(post=self).count()
+
+    def comments_count(self):
+        return Comment.objects.filter(post=self).count()
 
 
 class Comment(models.Model):

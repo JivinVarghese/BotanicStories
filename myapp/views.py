@@ -56,9 +56,10 @@ def view_post(request, post_id):
         user_detail = get_object_or_404(UserDetail, user=post.user)
     except Post.DoesNotExist:
         return redirect('')  # Redirect to create_post if post not found
+    user_has_liked = Like.objects.filter(post=post, user=request.user).exists() if request.user.is_authenticated else False
 
     all_comments = Comment.objects.filter(post=post).order_by('-created_time')
-    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail})
+    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail,'user_has_liked': user_has_liked})
 
 
 def edit_post(request, post_id):
@@ -85,16 +86,16 @@ def delete_post(request, post_id):
 #     return render(request, 'comment.html')
 
 
-def comments(request):
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('comments')
-    else:
-        form = CommentForm()
-
-    return render(request, 'comment.html', {'form': form})
+# def comments(request):
+#     if request.method == 'POST':
+#         form = CommentForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('comments')
+#     else:
+#         form = CommentForm()
+#
+#     return render(request, 'comment.html', {'form': form})
 
 
 def generate_post_data(posts, user):
@@ -110,7 +111,9 @@ def generate_post_data(posts, user):
             'subtitle': post.content[:400],
             'tags': list(tags),
             'image_url': post.image.url if post.image else '/static/images/default.jpg',
-            'bookmarked': post.post_id in user_bookmarks
+            'bookmarked': post.post_id in user_bookmarks,
+            'likes_count': post.likes_count,
+            'comments_count': post.comments_count
         })
     return post_data
 
@@ -238,4 +241,23 @@ def search_posts(request):
         data = [{'post_id': post.post_id, 'post_title': post.post_title} for post in results]
         print("data", data)
         return JsonResponse(data, safe=False)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+@login_required
+def like_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        action = data.get('action')
+
+        post = get_object_or_404(Post, post_id=post_id)
+
+        if action == 'add':
+            Like.objects.get_or_create(user=request.user, post=post)
+            return JsonResponse({'status': 'added', 'likes_count': post.likes_count()})
+        elif action == 'remove':
+            Like.objects.filter(user=request.user, post=post).delete()
+            return JsonResponse({'status': 'removed', 'likes_count': post.likes_count()})
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
