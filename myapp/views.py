@@ -250,3 +250,5 @@ def like_view(request):
 def about(request):
     return render(request, 'about.html')
 
+def landing_page(request):
+    return render(request, 'landing_page.html')
