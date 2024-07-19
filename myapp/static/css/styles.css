@@ -100,6 +100,9 @@ body, html {
     background: none;
     flex: 1;
     font-family: 'Inter', sans-serif;
+    height: 20px;
+    width: 50px;
+    padding-bottom: 15px;
 }
 
 .search-bar .search-icon {
@@ -482,13 +485,16 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
+    /*background-color: #f1f1f1;*/
     background: white;
-    border: 1px solid #ccc;
+    border: 2px #ccc;
     display: none;
     z-index: 1000;
     max-height: 200px;
     overflow-y: auto;
     width: 100%;
+    border-radius: 10px;
+    border-style: groove;
 }
 .search-dropdown .dropdown-item {
     padding: 10px;
