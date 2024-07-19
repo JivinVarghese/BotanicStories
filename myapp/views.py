@@ -111,7 +111,9 @@ def generate_post_data(posts, user):
             'subtitle': post.content[:400],
             'tags': list(tags),
             'image_url': post.image.url if post.image else '/static/images/default.jpg',
-            'bookmarked': post.post_id in user_bookmarks
+            'bookmarked': post.post_id in user_bookmarks,
+            'likes_count': post.likes_count,
+            'comments_count': post.comments_count
         })
     return post_data
 
