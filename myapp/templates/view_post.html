@@ -3,27 +3,53 @@
 {% block content %}
 <div class="container mt-5">
 
-    <div class="card">
-        <div class="card-body">
+    <div class="card_1">
+        <div class="card-body_1">
             <!-- Title and author info -->
+{#            <h1 class="card-title display-4">{{ post.post_title }}</h1>#}
+{#            <p class="text-muted">By {{ post.author }} &bull; {{ post.read_time }} min read</p>#}
             <h1 class="card-title display-4">{{ post.post_title }}</h1>
-            <p class="text-muted">By {{ post.author }} &bull; {{ post.read_time }} min read</p>
-
+            <div class="post-header mb-4">
+                <div class="user-info d-flex align-items-center">
+                    {% if user_detail.profile_pic %}
+                        <img class="user-icon" src="{{ user_detail.profile_pic.url }}" alt="{{ post.user.username }}" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+                    {% else %}
+                        <div class="user-initial" style="width: 50px; height: 50px; border-radius: 50%; background-color: #ddd; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; margin-right: 10px;">
+                            {{ post.user.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <span class="user-name">{{ post.user.username }}</span>
+                        <p class="text-muted"> 12 May 2024{{ post.create_date|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    {% for tag in tags %}
+                        <span class="tag badge badge-secondary">{{ tag.tag_name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
             <!-- Interaction buttons -->
             <div class="interaction-buttons d-flex justify-content-between my-4">
-                <div>
-                    <button class="btn btn-light">Like</button>
-                    <button class="btn btn-light" onclick="openNav2()">Comment</button>
-                    <button class="btn btn-light">Share</button>
+                <div class="post-meta">
+                    <span>{{ post.create_date|date:"F d, Y" }}</span>
+                    <span>&#x1F44D; 3200{{ post.likes_count }}</span>
+                    <span onclick="openNav2()">&#x1F4AC; 52{{ post.comments_count }}</span>
+                    <span class="bookmark-container">
+                        <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.post_id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
+                        <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                    </span>
                 </div>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Options
+            <div class="dropdown">
+                    <button class="dropdown-btn" type="button">
+                        <i class="fas fa-ellipsis-v"></i>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-content">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <li><a class="dropdown-item" href="{% url 'edit_post' post.post_id %}">Edit</a></li>
                         <li><a class="dropdown-item" href="{% url 'delete_post' post.post_id %}">Delete</a></li>
                     </ul>
+                    </div>
                 </div>
             </div>
 
@@ -106,6 +132,38 @@
 </div>
 <style>
 /* General styles */
+/* Dropdown button */
+.dropdown-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Dropdown content */
+.dropdown-content {
+    {#display: none;#}
+    position: absolute;
+    {#right: 0;#}
+    top: 100%;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    {#z-index: 1;#}
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     background-color: #fff;
@@ -146,13 +204,13 @@ header nav ul li a {
 }
 
 /* Card styles */
-.card {
+.card_1 {
     border: none;
     border-radius: 0;
 }
 
-.card-body {
-    padding: 40px;
+.card-body_1 {
+    padding-bottom: 40px;
 }
 
 .card-title {
@@ -166,15 +224,15 @@ header nav ul li a {
     color: #888;
 }
 
-/* Interaction buttons */
-.interaction-buttons button {
-    margin-right: 10px;
-}
-
-.interaction-buttons .dropdown-menu {
-    right: 0;
-    left: auto;
-}
+{#/* Interaction buttons */#}
+{#.interaction-buttons button {#}
+{#    margin-right: 10px;#}
+{#}#}
+{##}
+{#.interaction-buttons .dropdown-menu {#}
+{#    right: 0;#}
+{#    left: auto;#}
+{#}#}
 
 /* Post image */
 .img-fluid {
@@ -378,7 +436,7 @@ header nav ul li a {
 <script>
 // Toggle dropdown menu
 document.addEventListener('DOMContentLoaded', (event) => {
-    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownToggle = document.querySelector('.dropdown-btn');
     const dropdownMenu = document.querySelector('.dropdown-menu');
 
     dropdownToggle.addEventListener('click', () => {
@@ -392,6 +450,61 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 });
+//bookmark code
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.bookmark-container');
+    const addIcon = container.querySelector('.add-bookmark');
+    const removeIcon = container.querySelector('.remove-bookmark');
+    const postId = addIcon.getAttribute('data-id');
+
+    container.addEventListener('click', (event) => {
+        event.stopPropagation();  // Prevent any other click actions if needed
+        const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+
+        // Immediately toggle the icons for instant feedback
+        addIcon.style.display = action === 'add' ? 'none' : 'inline';
+        removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+        fetch('/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.status !== 'added' && data.status !== 'removed') {
+                // If the server action failed, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // If there's an error, revert the icon change
+            addIcon.style.display = action === 'add' ? 'inline' : 'none';
+            removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 {#    scripts for comment section#}
     <script>

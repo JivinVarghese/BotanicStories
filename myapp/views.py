@@ -50,13 +50,15 @@ def view_post(request, post_id):
         # return redirect('create_post')  # Prevents re-posting on refresh
 
     try:
-        post = Post.objects.get(post_id=post_id)
+        # post = Post.objects.get(post_id=post_id)
+        post = get_object_or_404(Post, post_id=post_id)
         tags = Tag.objects.filter(post=post)
+        user_detail = get_object_or_404(UserDetail, user=post.user)
     except Post.DoesNotExist:
-        return redirect('create_post')  # Redirect to create_post if post not found
+        return redirect('')  # Redirect to create_post if post not found
 
     all_comments = Comment.objects.filter(post=post).order_by('-created_time')
-    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments})
+    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail})
 
 
 def edit_post(request, post_id):
