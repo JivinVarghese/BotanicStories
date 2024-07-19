@@ -9,7 +9,7 @@ urlpatterns = [
                   path('post/<int:post_id>/', views.view_post, name='view_post'),
                   path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
                   path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
-                  path('comments/', views.comments, name='comments'),
+                  # path('comments/', views.comments, name='comments'),
                   path('post/<int:post_id>/comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
                   path('post/<int:post_id>/comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
                   path('profile/edit_profile/', views.edit_profile, name='edit_profile'),
@@ -17,5 +17,6 @@ urlpatterns = [
                   path('profile/<str:username>/about/', views.about_user, name='about_user'),
                   path('search/', views.search_posts, name='search_posts'),
                   path('bookmark/', views.bookmark_view, name='bookmark'),
+                  path('like/', views.like_view, name='like_view'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
