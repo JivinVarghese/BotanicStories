@@ -21,9 +21,11 @@
                                     Show
                                 </a>
                             </div>
+                            <p><a href="{% url 'register' %}">Register</a> if you don't have an account.</p>
                             <small class="form-text text-muted text-right">
-                                <a href="#">Forgot password?</a>
+                                <a href="{% url 'reset_password' %}">Forgot password?</a>
                             </small>
+
                             <button class="btn btn-primary btn-block mt-2" type="submit">Login</button>
 {#                            <div class="form-group">#}
 {#                                {{ form.as_p }}#}
