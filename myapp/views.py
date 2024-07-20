@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 
 from .forms import *
 from .models import *
@@ -124,9 +125,14 @@ def generate_post_data(posts, user):
 
 
 def home(request):
-    posts = Post.objects.all()
-    post_data = generate_post_data(posts, request.user)
-    return render(request, 'home.html', {'posts': post_data})
+    posts = Post.objects.all().order_by('-create_date')  # Order posts by creation date, newest first
+    paginator = Paginator(posts, 10)  # Show 10 posts per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    post_data = generate_post_data(page_obj, request.user)
+    return render(request, 'home.html', {'posts': post_data, 'page_obj': page_obj})
 
 
 @csrf_exempt

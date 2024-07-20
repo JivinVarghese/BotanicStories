@@ -7,20 +7,20 @@
     <div class="post-container" data-post-id="{{ post.id }}">
         <div class="post-content">
             <div class="post-header">
-            <div class="user-info">
-                {% if post.user_image %}
-                <img class="user-icon" src="{{ post.user_image }}" alt="{{ post.user_name }}">
-                {% else %}
-                <div class="user-initial">{{ post.user_name|slice:":1" }}</div>
-                {% endif %}
-                <span class="user-name">{{ post.user_name }}</span>
+                <div class="user-info">
+                    {% if post.user_image %}
+                    <img class="user-icon" src="{{ post.user_image }}" alt="{{ post.user_name }}">
+                    {% else %}
+                    <div class="user-initial">{{ post.user_name|slice:":1" }}</div>
+                    {% endif %}
+                    <span class="user-name">{{ post.user_name }}</span>
+                </div>
+                <div class="tags">
+                    {% for tag in post.tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="tags">
-                {% for tag in post.tags %}
-                <span class="tag">{{ tag }}</span>
-                {% endfor %}
-            </div>
-        </div>
 
             <h2 class="post-title">{{ post.title }}</h2>
             <p class="post-subtitle">{{ post.subtitle }}</p>
@@ -40,7 +40,6 @@
                 <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
                 <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
                 </span>
-
             </div>
         </div>
         <div class="post-image">
@@ -48,7 +47,27 @@
         </div>
     </div>
     {% endfor %}
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.bookmark-container').forEach(container => {
@@ -89,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-document.querySelectorAll('.post-container').forEach(container => {
+    document.querySelectorAll('.post-container').forEach(container => {
         container.addEventListener('click', (event) => {
             // Prevent navigation if the click was on the bookmark button
             if (event.target.classList.contains('bookmark-button')) {
@@ -117,6 +136,7 @@ function getCookie(name) {
     return cookieValue;
 }
 </script>
-    <!-- Include FontAwesome for the ellipsis icon -->
+
+<!-- Include FontAwesome for the ellipsis icon -->
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
 {% endblock %}
