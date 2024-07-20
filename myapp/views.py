@@ -18,14 +18,13 @@ def base(request):
     return render(request, 'base.html')
 
 
+@login_required
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            #ignore this line for now - this is for dummy data (will change it later)
-            post.user = request.user if request.user.is_authenticated else User.objects.get(
-                username='happy')  # Adjust as per your authentication logic
+            post.user = request.user
             post.save()
 
             # Create tags
@@ -64,23 +63,36 @@ def view_post(request, post_id):
     return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail,'user_has_liked': user_has_liked})
 
 
+@login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, post_id=post_id)
+    if request.user != post.user:
+        return redirect('view_post', post_id=post_id)
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
-            form.save()
-            return redirect('view_post', post_id=post_id)
+            post = form.save(commit=False)
+            post.save()
+            # Clear existing tags
+            Tag.objects.filter(post=post).delete()
+            # Add new tags
+            tags = form.cleaned_data['tags']
+            for tag_name in tags.split(','):
+                tag, created = Tag.objects.get_or_create(post=post, tag_name=tag_name.strip())
+            return redirect('view_post', post_id=post.post_id)
     else:
         form = PostForm(instance=post)
-    return render(request, 'edit_post.html', {'form': form, 'post_id': post_id})
+        # Join existing tags to show in the form
+        existing_tags = ', '.join(post.tag_set.values_list('tag_name', flat=True))
+        form.fields['tags'].initial = existing_tags
+    return render(request, 'edit_post.html', {'form': form, 'post': post})
 
-
+@login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, post_id=post_id)
     if request.method == 'POST':
         post.delete()
-        return redirect('base')
+        return redirect('home')
     return render(request, 'delete_post.html', {'post': post})
 
 
