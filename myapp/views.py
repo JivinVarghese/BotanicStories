@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import UserForm, UserDetailForm, CustomLoginForm
 from .decorators import redirect_authenticated_user
@@ -57,3 +58,7 @@ def custom_login(request):
 def custom_logout(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def user_analytics(request):
+    return render(request,'analytics.html')
