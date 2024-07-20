@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.num_posts > 0) {
                 postList.insertAdjacentHTML('beforeend', data.html);
+                attachEventListeners();  // Reattach event listeners to newly loaded posts
             }
             loading = false;
             loadingIndicator.style.display = 'none';
@@ -57,57 +58,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.addEventListener('scroll', handleScroll);
+    function attachEventListeners() {
+        document.querySelectorAll('.bookmark-container').forEach(container => {
+            container.addEventListener('click', (event) => {
+                event.stopPropagation();  // Prevent triggering the post click event
+                const addIcon = container.querySelector('.add-bookmark');
+                const removeIcon = container.querySelector('.remove-bookmark');
+                const postId = addIcon.getAttribute('data-id');
+                const action = addIcon.style.display === 'none' ? 'remove' : 'add';
 
-    document.querySelectorAll('.bookmark-container').forEach(container => {
-        container.addEventListener('click', (event) => {
-            event.stopPropagation();  // Prevent triggering the post click event
-            const addIcon = container.querySelector('.add-bookmark');
-            const removeIcon = container.querySelector('.remove-bookmark');
-            const postId = addIcon.getAttribute('data-id');
-            const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+                // Immediately toggle the icons for instant feedback
+                addIcon.style.display = action === 'add' ? 'none' : 'inline';
+                removeIcon.style.display = action === 'add' ? 'inline' : 'none';
 
-            // Immediately toggle the icons for instant feedback
-            addIcon.style.display = action === 'add' ? 'none' : 'inline';
-            removeIcon.style.display = action === 'add' ? 'inline' : 'none';
-
-            fetch('/bookmark/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({ post_id: postId, action: action })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                if (data.status !== 'added' && data.status !== 'removed') {
-                    // If the server action failed, revert the icon change
+                fetch('/bookmark/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ post_id: postId, action: action })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    if (data.status !== 'added' && data.status !== 'removed') {
+                        // If the server action failed, revert the icon change
+                        addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                        removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // If there's an error, revert the icon change
                     addIcon.style.display = action === 'add' ? 'inline' : 'none';
                     removeIcon.style.display = action === 'add' ? 'none' : 'inline';
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                // If there's an error, revert the icon change
-                addIcon.style.display = action === 'add' ? 'inline' : 'none';
-                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+                });
             });
         });
-    });
 
-    document.querySelectorAll('.post-container').forEach(container => {
-        container.addEventListener('click', (event) => {
-            // Prevent navigation if the click was on the bookmark button
-            if (event.target.classList.contains('bookmark-button')) {
-                return;
-            }
+        document.querySelectorAll('.post-container').forEach(container => {
+            container.addEventListener('click', (event) => {
+                // Prevent navigation if the click was on the bookmark button
+                if (event.target.classList.contains('bookmark-button')) {
+                    return;
+                }
 
-            const postId = container.getAttribute('data-post-id');
-            window.location.href = `/post/${postId}/`;
+                const postId = container.getAttribute('data-post-id');
+                window.location.href = `/post/${postId}/`;
+            });
         });
-    });
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    attachEventListeners();  // Attach event listeners on initial load
 });
 
 function getCookie(name) {
@@ -124,6 +129,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 </script>
 
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
