@@ -27,6 +27,7 @@ class PostForm(forms.ModelForm):
         }
 
 class UserDetailForm(forms.ModelForm):
+    name = forms.CharField(max_length=150, required=True)
     class Meta:
         model = UserDetail
         fields = ['profile_pic', 'bio', 'location', 'interests', 'date_of_birth']
