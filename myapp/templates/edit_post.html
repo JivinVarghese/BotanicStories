@@ -1,11 +1,76 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<div class="container mt-5">
-    <h2>Edit Post</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Update Post</button>
-    </form>
+<div class="edit_post-overlay">
+    <div class="edit_post-modal">
+        <form method="post" enctype="multipart/form-data" id="post-form">
+            {% csrf_token %}
+            <div class="edit_post-title-container">
+                {{ form.post_title }}
+            </div>
+            <div class="edit_post-content-container">
+                {{ form.content }}
+            </div>
+            <div class="edit_post-image-upload">
+                {% if form.instance.image %}
+                    <img src="{{ form.instance.image.url }}" alt="Current Image" class="edit_post-current-image">
+                {% endif %}
+                <label for="image-upload" class="edit_post-image-upload-label">+</label>
+                <input type="file" id="image-upload" name="image" style="display: none;">
+                <span id="image-upload-filename" class="edit_post-image-upload-filename"></span>
+            </div>
+            <div class="edit_post-tags-container">
+                {{ form.tags }}
+            </div>
+            <div class="edit_post-footer">
+                <button type="button" id="update-btn" class="edit_post-update-btn">Update</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const titleInput = document.querySelector('input[name="post_title"]');
+    const contentTextarea = document.querySelector('textarea[name="content"]');
+    const updateBtn = document.getElementById('update-btn');
+    const form = document.getElementById('post-form');
+    const imageUploadLabel = document.querySelector('.edit_post-image-upload-label');
+    const imageUploadInput = document.getElementById('image-upload');
+    const imageUploadFilename = document.getElementById('image-upload-filename');
+
+    titleInput.placeholder = 'Title';
+    contentTextarea.placeholder = 'Tell your story...';
+
+    // Add placeholder for tags
+    const tagsInput = document.querySelector('input[name="tags"]');
+        tagsInput.placeholder = 'Add tags';
+
+    // Auto-expand textarea
+    contentTextarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Submit form when Update button is clicked
+    updateBtn.addEventListener('click', function() {
+        form.submit();
+    });
+
+    // Trigger file input when plus icon is clicked
+    imageUploadLabel.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default action to avoid re-triggering
+        imageUploadInput.click();
+    });
+
+    // Display the selected file name
+    imageUploadInput.addEventListener('change', function() {
+        if (imageUploadInput.files.length > 0) {
+            imageUploadFilename.textContent = imageUploadInput.files[0].name;
+        } else {
+            imageUploadFilename.textContent = '';
+        }
+    });
+});
+</script>
 {% endblock %}

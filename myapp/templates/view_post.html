@@ -32,7 +32,6 @@
             <!-- Interaction buttons -->
             <div class="interaction-buttons d-flex justify-content-between my-4">
                 <div class="post-meta">
-                    <span>{{ post.create_date|date:"F d, Y" }}</span>
 {#                    <span>&#x1F44D; 3200{{ post.likes_count }}</span>#}
             <span class="like-container">
             {% if request.user.is_authenticated %}
@@ -72,17 +71,21 @@
                         <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
                     </span>
                 </div>
-            <div class="dropdown">
-                    <button class="dropdown-btn" type="button">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-content">
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="{% url 'edit_post' post.post_id %}">Edit</a></li>
-                        <li><a class="dropdown-item" href="{% url 'delete_post' post.post_id %}">Delete</a></li>
-                    </ul>
-                    </div>
+            {% if user.is_authenticated %}
+            {% if user == post.user %}
+                <div class="dropdown">
+                        <button class="dropdown-btn-post" type="button">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="{% url 'edit_post' post.post_id %}">Edit</a></li>
+                                <li><a class="dropdown-item" href="{% url 'delete_post' post.post_id %}">Delete</a></li>
+                            </ul>
+                        </div>
                 </div>
+            {% endif %}
+            {% endif %}
             </div>
 
             <!-- Post image -->
@@ -163,7 +166,7 @@
 <style>
 /* General styles */
 /* Dropdown button */
-.dropdown-btn {
+.dropdown-btn-post {
     background: none;
     border: none;
     font-size: 18px;
@@ -467,7 +470,7 @@ header nav ul li a {
 <script>
 // Toggle dropdown menu
 document.addEventListener('DOMContentLoaded', (event) => {
-    const dropdownToggle = document.querySelector('.dropdown-btn');
+    const dropdownToggle = document.querySelector('.dropdown-btn-post');
     const dropdownMenu = document.querySelector('.dropdown-menu');
 
     dropdownToggle.addEventListener('click', () => {
