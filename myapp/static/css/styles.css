@@ -43,11 +43,6 @@
     color: #f1f1f1;
 }
 
-.profile-icon {
-    cursor: pointer;
-    margin-left: 10px;
-}
-
 body, html {
     overflow-x: hidden;
 }
@@ -100,6 +95,9 @@ body, html {
     background: none;
     flex: 1;
     font-family: 'Inter', sans-serif;
+    height: 20px;
+    width: 50px;
+    padding-bottom: 15px;
 }
 
 .search-bar .search-icon {
@@ -109,4 +107,922 @@ body, html {
 
 .write-icon {
     margin-right: 1px;
+}
+
+.user-icon {
+    width: 30px;  /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    border-radius: 50%; /* Makes the image circular */
+    margin-right: 8px; /* Space between image and username */
+}
+
+.user-initial {
+    width: 30px;  /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    background-color: #007bff; /* Background color for initials */
+    color: white; /* Text color */
+    border-radius: 50%; /* Makes the initials circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 8px; /* Space between initials and username */
+}
+
+/*homepage*/
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.post-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.post-content {
+    width: 75%;
+}
+
+.post-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.post-subtitle {
+    font-size: 16px;
+    color: #555;
+}
+
+.post-meta {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.post-meta span {
+    margin-right: 15px;
+}
+
+.post-image img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-initial {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.tags {
+    display: flex;
+    align-items: center;
+}
+
+.tag {
+    background-color: #e7e7e7;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.post-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+
+.bookmark-icon {
+    width: 19px;  /* Adjust size as needed */
+    height: 19px;  /* Adjust size as needed */
+    cursor: pointer;
+    float: right;
+
+}
+
+#loading {
+    text-align: center;
+    padding: 20px;
+}
+
+#loading img {
+    width: 50px;
+    height: 50px;
+}
+
+
+/* Profile picture styling */
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/*footer*/
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    border-top: 1px solid #e7e7e7;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    margin: 0 10px;
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    color: #343a40;
+}
+
+/* Username styling */
+.username {
+    font-size: 2rem;
+    font-weight: bold;
+    /* Remove margin: center; */
+}
+
+/* Ensure the parent container uses flexbox for centering */
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Edit Profile button styling */
+.btn-edit-profile {
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    align-self: flex-end;
+    border-radius: 30px;
+    background-color: #33691E;
+    margin-top: auto;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.btn-edit-profile:hover {
+    background-color: #33691E;
+    color: white;
+}
+
+.profile-page-button {
+    align-self: flex-end;
+    border-radius: 30px;
+    background-color: #33691E;
+    border: none;
+    margin-top: auto;
+}
+
+/* Nav tabs styling */
+.nav-tabs {
+    border-bottom: none;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #000000;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 2px solid #000000;
+    color: #000000;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    position: relative;
+}
+
+.card-title {
+    font-size: 1.25rem;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+/* General text alignment */
+.text-center h3, .text-center h4 {
+    margin-top: 20px;
+}
+
+.text-center ul {
+    padding-left: 0;
+}
+
+/* About section */
+.about-section {
+    margin-top: 20px;
+}
+
+.about-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.about-section p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.about-section h4 {
+    font-size: 1.4rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.details-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.details-list li {
+    margin-bottom: 5px;
+}
+
+.form-group label {
+        font-weight: bold;
+    }
+    .form-control {
+        margin-top: 0.5rem;
+    }
+    .btn-primary {
+        background-color: #33691E;
+        border-radius: 30px;
+        border: none;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-radius: 30px;
+        border: none;
+    }
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .rounded-circle {
+        display: block;
+        margin: 0 auto;
+    }
+
+/*.tell-section {*/
+/*    background-color: #f8f9fa;*/
+/*    padding: 20px;*/
+/*    border-radius: 8px;*/
+/*}*/
+
+/*.tell-section h4 {*/
+/*    font-size: 1.5rem;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+/*.tell-section p {*/
+/*    line-height: 1.6;*/
+/*    margin-bottom: 15px;*/
+/*}*/
+
+/*#editBioForm {*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*#editBioForm textarea {*/
+/*    width: 100%;*/
+/*    resize: vertical;*/
+/*}*/
+
+/*#editBioForm .btn {*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 1rem;
+    }
+
+    .btn-edit-profile {
+        font-size: 0.875rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /*.tell-section {*/
+    /*    padding: 15px;*/
+    /*}*/
+
+    /*.tell-section h4 {*/
+    /*    font-size: 1.3rem;*/
+    /*}*/
+
+    /*.tell-section p {*/
+    /*    font-size: 0.9rem;*/
+    /*}*/
+}
+
+@media (max-width: 400px) {
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-pic {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-text {
+        font-size: 0.875rem;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 0.875rem;
+    }
+
+    .btn-edit-profile {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+/*end of  profile picture css*/
+
+/*start of base.html search box css*/
+.search-container {
+    position: relative;
+}
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    /*background-color: #f1f1f1;*/
+    background: white;
+    border: 2px #ccc;
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    border-radius: 10px;
+    border-style: groove;
+}
+.search-dropdown .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+.search-dropdown .dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+/* end of base.html search box css*/
+
+/* Contact Us Page */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-page-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0; /* Add some padding to ensure space between modal and header/footer */
+    margin-bottom: 0;
+}
+
+.video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+#bgVideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+}
+
+.contact-info-modal {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1;
+    margin: auto; /* This helps in centering the modal */
+}
+
+/* Ensure the footer stays at the bottom */
+footer {
+    margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-height: 8000px) {
+    .contact-info-modal {
+        padding: 20px;
+        max-height: 100vh;
+    }
+}
+
+@media (max-width: 650px) {
+    .contact-info-modal {
+        width: 90%;
+    }
+    .contact-info {
+        flex-direction: column;
+    }
+    .contact-info div {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+.contact-header {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.contact-header h1 {
+    font-family: 'Noto Serif', serif; /* Keep Noto Serif for the main heading */
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.contact-header h2 {
+    font-family: 'Inter', sans-serif; /* Ensure subheading uses Inter */
+    font-size: 18px;
+    color: #666;
+    font-weight: normal;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.contact-info div {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f0f4f8;
+    width: 48%; /* Set a fixed width for both divs */
+    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.contact-info img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px; /* Increased margin for better spacing */
+    flex-shrink: 0; /* Prevent the image from shrinking */
+}
+
+.contact-info a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflow text */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+    flex-grow: 1; /* Allow the text to take up remaining space */
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form button { /* Apply Inter font to all form elements */
+    font-family: 'Inter', sans-serif; /* Ensure all form elements use Inter */
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f7f9fc;
+    transition: border-color 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.contact-form button {
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.contact-form button:hover {
+    background: #45a049;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 500px; /* Maximum width */
+    text-align: center; /* Center text */
+    border-radius: 8px; /* Rounded corners */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.home-button {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #4CAF50; /* Green */
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* No underline */
+}
+
+.home-button img {
+    width: 16px; /* Size of the arrow icon */
+    height: 16px; /* Size of the arrow icon */
+    margin-left: 5px; /* Space between text and icon */
+}
+
+/*create post */
+
+.create_post-body {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.create_post-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.create_post-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Serif', serif;
+}
+
+.create_post-title-container input {
+    font-size: 42px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-bottom: 20px;
+    font-family: 'Tinos', serif;
+}
+
+.create_post-content-container textarea {
+    font-size: 21px;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 300px;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+}
+
+.create_post-image-upload {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.create_post-image-upload-label {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.create_post-image-upload-filename {
+    font-size: 16px;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+.create_post-tags-container input {
+    font-size: 21px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Tinos', serif;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: #b3b3b1;
+}
+
+.create_post-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.create_post-publish-btn {
+    background-color: #1a8917;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+/*editpost*/
+
+.edit_post-body {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.edit_post-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.edit_post-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Serif', serif;
+}
+
+.edit_post-title-container input {
+    font-size: 42px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-bottom: 20px;
+    font-family: 'Tinos', serif;
+}
+
+.edit_post-content-container textarea {
+    font-size: 21px;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 300px;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+}
+
+.edit_post-image-upload {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.edit_post-image-upload-label {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+    font-size: 24px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.edit_post-image-upload-filename {
+    font-size: 16px;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+.edit_post-tags-container input {
+    font-size: 21px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Tinos', serif;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: #b3b3b1;
+}
+
+.edit_post-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.edit_post-update-btn {
+    background-color: #1a8917;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+.edit_post-current-image {
+    max-width: 20%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+    margin-left: 30%;
+
 }

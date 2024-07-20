@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center profile-container">
+            <div class="profile-picture">
+                {% if user_detail.profile_pic %}
+                    <img src="{{ user_detail.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture">
+                {% else %}
+                    <img src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU" class="rounded-circle profile-pic" alt="Profile Picture">
+                {% endif %}
+            </div>
+            <h2 class="username">{{ user.username }}</h2>
+            <a href="{% url 'edit_profile' %}" class="btn btn-edit-profile mt-3">Edit Profile</a>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs justify-content-center" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="home-tab" href="{% url 'user_profile' user.username %}" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="about-tab" href="{% url 'about_user' user.username%}" role="tab" aria-controls="about" aria-selected="false">About</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-3" id="profileTabsContent">
+                <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h3 class="card-title">About Me</h3>
+                                    <p class="card-text text-muted">{{ user_detail.bio }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title text-secondary">Details</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Date of Birth:</strong> {{ user_detail.date_of_birth|date:"F j, Y" }}</li>
+                                        <li class="list-group-item"><strong>Location:</strong> {{ user_detail.location }}</li>
+                                        <li class="list-group-item"><strong>Interests:</strong> {{ user_detail.interests }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-pic {
+        border: 3px solid #ddd;
+        transition: border-color 0.3s;
+    }
+    .profile-pic:hover {
+        border-color: #007bff;
+    }
+    .card-title {
+        font-weight: 700;
+    }
+    .card-text {
+        font-size: 1.1rem;
+    }
+    .list-group-item {
+        font-size: 1rem;
+    }
+</style>
+{% endblock %}

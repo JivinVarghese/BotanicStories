@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center profile-container">
+            <div class="profile-picture">
+                {% if user_detail.profile_pic %}
+                    <img src="{{ user_detail.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture">
+                {% else %}
+                    <img src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU" class="rounded-circle profile-pic" alt="Profile Picture">
+                {% endif %}
+            </div>
+            <h2 class="username">{{ user.username }}</h2>
+            <a href="{% url 'edit_profile' %}" class="btn btn-edit-profile mt-3">Edit Profile</a>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-1">
+        <div class="col-md-8">
+            <ul class="nav nav-tabs justify-content-center" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="about-tab" href="{% url 'about_user' user.username %}" role="tab" aria-controls="about" aria-selected="false">About</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-3" id="profileTabsContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Reading List</h5>
+                            {% if posts %}
+                                {% for post in posts %}
+                                    <div class="post-container" data-post-id="{{ post.id }}">
+                                        <div class="post-content">
+                                            <div class="post-header">
+                                                <div class="user-info">
+                                                    {% if post.user_image %}
+                                                        <img class="user-icon" src="{{ post.user_image }}" alt="{{ post.user_name }}">
+                                                    {% else %}
+                                                        <div class="user-initial">{{ post.user_name|slice:":1" }}</div>
+                                                    {% endif %}
+                                                    <span class="user-name">{{ post.user_name }}</span>
+                                                </div>
+                                                <div class="tags">
+                                                    {% for tag in post.tags %}
+                                                        <span class="tag">{{ tag }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <h2 class="post-title">{{ post.title }}</h2>
+                                            <p class="post-subtitle">{{ post.subtitle }}</p>
+                                            <div class="post-meta">
+                                                <span>
+                                                    <i class="fa-solid fa-heart like-icon remove-like" style="color: #FF3040; font-size: 19px"></i>
+                                                    <span>{{ post.likes_count }}</span>
+                                                </span>
+                                                <span>
+                                                    <i class="fa-regular fa-comment" style="font-size: 19px"></i>
+                                                    <span>{{ post.comments_count }}</span>
+                                                </span>
+                                                <span class="bookmark-container">
+                                                    <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
+                                                    <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="post-image">
+                                            <img src="{{ post.image_url }}" alt="Post Image">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="card-text">No bookmarked stories</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Bookmark functionality
+    document.querySelectorAll('.bookmark-container').forEach(container => {
+        container.addEventListener('click', (event) => {
+            event.stopPropagation();  // Prevent triggering the post click event
+            const addIcon = container.querySelector('.add-bookmark');
+            const removeIcon = container.querySelector('.remove-bookmark');
+            const postId = addIcon.getAttribute('data-id');
+            const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+
+            // Immediately toggle the icons for instant feedback
+            addIcon.style.display = action === 'add' ? 'none' : 'inline';
+            removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+            fetch('/bookmark/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ post_id: postId, action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if (data.status === 'removed') {
+                    // Remove the post container from the DOM
+                    container.closest('.post-container').remove();
+                    // If no posts left, show "No bookmarked stories" message
+                    if (document.querySelectorAll('.post-container').length === 0) {
+                        document.querySelector('.card-body').innerHTML = '<p class="card-text">No bookmarked stories</p>';
+                    }
+                } else if (data.status !== 'added') {
+                    // If the server action failed, revert the icon change
+                    addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                    removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // If there's an error, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+            });
+        });
+    });
+
+    // Post click functionality
+    document.querySelectorAll('.post-container').forEach(container => {
+        container.addEventListener('click', (event) => {
+            // Prevent navigation if the click was on the bookmark icon
+            if (event.target.classList.contains('bookmark-icon')) {
+                return;
+            }
+
+            const postId = container.getAttribute('data-post-id');
+            window.location.href = `/post/${postId}/`;
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script>
+<script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
+{% endblock %}

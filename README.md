@@ -50,7 +50,7 @@ This Django-based web application aims to provide a platform similar to Medium, 
 ## Installation
 1. Clone the repository.
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/JivinVarghese/BotanicStories
     ```
 2. Install dependencies using pip.
     ```bash

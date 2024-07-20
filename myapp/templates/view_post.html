@@ -1,0 +1,646 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card_1">
+        <div class="card-body_1">
+            <!-- Title and author info -->
+{#            <h1 class="card-title display-4">{{ post.post_title }}</h1>#}
+{#            <p class="text-muted">By {{ post.author }} &bull; {{ post.read_time }} min read</p>#}
+            <h1 class="card-title display-4">{{ post.post_title }}</h1>
+            <div class="post-header mb-4">
+                <div class="user-info d-flex align-items-center">
+                    {% if user_detail.profile_pic %}
+                        <img class="user-icon" src="{{ user_detail.profile_pic.url }}" alt="{{ post.user.username }}" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+                    {% else %}
+                        <div class="user-initial" style="width: 50px; height: 50px; border-radius: 50%; background-color: #ddd; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; margin-right: 10px;">
+                            {{ post.user.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <span class="user-name">{{ post.user.username }}</span>
+                        <p class="text-muted"> {{ post.create_date|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    {% for tag in tags %}
+                        <span class="tag badge badge-secondary">{{ tag.tag_name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Interaction buttons -->
+            <div class="interaction-buttons d-flex justify-content-between my-4">
+                <div class="post-meta">
+{#                    <span>&#x1F44D; 3200{{ post.likes_count }}</span>#}
+            <span class="like-container">
+            {% if request.user.is_authenticated %}
+                {% if not user_has_liked %}
+                <i class="fa-regular fa-heart like-icon add-like"
+                    style="font-size: 19px"
+                    data-id="{{ post.post_id }}"
+                    data-action="add"
+                >
+                </i>
+                {% else %}
+                <i class="fa-solid fa-heart like-icon remove-like"
+                    style="color: #FF3040; font-size: 19px"
+                    data-id="{{ post.post_id }}"
+                    data-action="remove"
+
+                >
+                </i>
+                    {% endif %}
+                {% else %}
+                <i class="fa-solid fa-heart like-icon remove-like"
+                    style="color: #FF3040; font-size: 19px"
+                    data-id="{{ post.post_id }}"
+                    data-action="remove"
+                >
+                </i>
+            {% endif %}
+                <span id="likes-count-{{ post.post_id }}">{{ post.likes_count }}</span>
+            </span>
+{#                    <span onclick="openNav2()">&#x1F4AC; 52{{ post.comments_count }}</span>#}
+                    <span class="comment-container" onclick="openNav2()" >
+                        <i class="fa-regular fa-comment" style="font-size: 19px"></i>
+                        <span id="comments-count-{{ post.post_id }}">{{ post.comments_count }}</span>
+                    </span>
+                    <span class="bookmark-container">
+                        <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.post_id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
+                        <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                    </span>
+                </div>
+            {% if user.is_authenticated %}
+            {% if user == post.user %}
+                <div class="dropdown">
+                        <button class="dropdown-btn-post" type="button">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="{% url 'edit_post' post.post_id %}">Edit</a></li>
+                                <li><a class="dropdown-item" href="{% url 'delete_post' post.post_id %}">Delete</a></li>
+                            </ul>
+                        </div>
+                </div>
+            {% endif %}
+            {% endif %}
+            </div>
+
+            <!-- Post image -->
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-fluid mb-4" alt="Post Image">
+            {% endif %}
+
+            <!-- Post content -->
+            <p class="card-text">{{ post.content }}</p>
+
+        </div>
+    </div>
+</div>
+<div id="mySidenav" class="sidenav">
+    <span class="closebtn" onclick="closeNav2()">&times;</span>
+    <div class="header">
+        <h4>Responses ({{ comments|length }})</h4>
+    </div>
+    {% if request.user.is_authenticated %}
+    <div class="add-comment">
+        <form method="post">
+{#        <form id="comment-form" method="post" action="{% url 'view_post' post.post_id %}">#}
+            {% csrf_token %}
+            {{ form.comment_text }}
+{#            <input type="hidden" id="sidenav-state" name="sidenav_state" value="closed">#}
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="comment-section">
+        {% for comment in comments %}
+            <div class="comment">
+            <div class="avatar">
+                {% if comment.get_profile_img %}
+                    <img src="{{ comment.get_profile_img }}" alt="{{ comment.user.username }}" class="avatar-img" style="height: 100%; width: 100%;border-radius: 50%">
+                {% else %}
+                    {{ comment.user.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+            <div class="comment-body">
+                <h5>
+                    {{ comment.user.username }}
+                    {% if request.user == comment.user  %}
+                    <div class="dropdown">
+                        <button class="dropdown-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        <div class="dropdown-content">
+{#                                <a href="#">Edit</a>#}
+                            <a href="#" class="edit-comment-link" data-comment-id="{{ comment.comment_id }}" data-comment-text="{{ comment.comment_text }}">Edit</a>
+{#                                <a href="#">Delete</a>#}
+                            {% if request.user == comment.user or request.user.is_staff %}
+                            <a href="#" class="delete-comment-link" data-comment-id="{{ comment.comment_id }}">Delete</a>
+                            <form id="delete-comment-{{ comment.comment_id }}" action="{% url 'delete_comment' post.post_id comment.comment_id %}" method="POST" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </h5>
+                <div class="time">{{ comment.created_time|timesince }} ago</div>
+                <p>{{ comment.comment_text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+<!-- Modal for editing comments -->
+<div id="editCommentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="edit-comment-form" method="post">
+            {% csrf_token %}
+            <textarea id="edit-comment-text" name="comment_text" rows="3" class="form-control" placeholder="Edit your comment..."></textarea>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+    </div>
+</div>
+</div>
+<style>
+/* General styles */
+/* Dropdown button */
+.dropdown-btn-post {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Dropdown content */
+.dropdown-content {
+    {#display: none;#}
+    position: absolute;
+    {#right: 0;#}
+    top: 100%;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    {#z-index: 1;#}
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+header .logo img {
+    height: 50px;
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* Card styles */
+.card_1 {
+    border: none;
+    border-radius: 0;
+}
+
+.card-body_1 {
+    padding-bottom: 40px;
+}
+
+.card-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.text-muted {
+    font-size: 1rem;
+    color: #888;
+}
+
+{#/* Interaction buttons */#}
+{#.interaction-buttons button {#}
+{#    margin-right: 10px;#}
+{#}#}
+{##}
+{#.interaction-buttons .dropdown-menu {#}
+{#    right: 0;#}
+{#    left: auto;#}
+{
+#}#}
+
+/* Post image */
+.img-fluid {
+    width: 100%;
+    height: auto;
+}
+
+/* Tags */
+.card-text strong {
+    display: block;
+    margin-top: 20px;
+}
+</style>
+{#    side nav section css do not touch happy #}
+    <style>
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        right: 0;
+        background-color: #fff;
+        overflow-x: hidden;
+        transition: 0.5s;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+    }
+    .sidenav .closebtn {
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        font-size: 36px;
+        cursor: pointer;
+    }
+    .sidenav .header {
+        padding: 16px;
+        border-bottom: 1px solid #ddd;
+    }
+    .sidenav .comment-section {
+        padding: 16px;
+        border-bottom: #818181;
+    }
+    .sidenav .comment {
+        display: flex;
+        align-items: flex-start; /* Align items at the top */
+        margin-bottom: 15px;
+        border-bottom: 1px solid lightgray;
+        padding-bottom: 10px;
+    }
+    .sidenav .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #33691E;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .sidenav .comment-body {
+        flex: 1;
+        position: relative; /* Add relative positioning to comment-body */
+    }
+    .sidenav .comment-body h5 {
+        margin: 0;
+        font-size: 16px;
+        display: flex;
+        justify-content: space-between; /* Space out the name and the dots */
+        align-items: center;
+    }
+    .sidenav .comment-body .time {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+    }
+    .sidenav .comment-body p {
+        margin: 0; /* Remove default margins for p tag */
+    }
+    .sidenav .comment-body a {
+        color: black;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .sidenav .comment-body a:hover {
+        background-color: lightgray;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-btn{
+        border: none;
+        background-color: white;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .sidenav .add-comment {
+        margin: 16px;
+        padding: 16px;
+        {#height: 8rem;#}
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    .sidenav .add-comment .form-control {
+        border: 0;
+        resize: none;
+        box-shadow: none;
+        flex: 1;
+        margin-bottom: 10px;
+    }
+    .sidenav .add-comment form {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .sidenav .add-comment .btn {
+        align-self: flex-end;
+        border-radius: 30px ;
+        background-color: #33691E;
+        border: none;
+        margin-top: auto; /* Push the button to the bottom */
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 3; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto; /* 10% from the top and centered */
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        width: 80%; /* Could be more or less, depending on screen size */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .modal .close:hover,
+    .modal .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal .form-control {
+        border: 0;
+        resize: none;
+        box-shadow: none;
+        flex: 1;
+        margin-bottom: 10px;
+    }
+
+    .modal .btn {
+        align-self: flex-end;
+        border-radius: 30px;
+        background-color: #33691E;
+        border: none;
+        margin-top: auto; /* Push the button to the bottom */
+    }
+</style>
+<script>
+// Toggle dropdown menu
+document.addEventListener('DOMContentLoaded', (event) => {
+    const dropdownToggle = document.querySelector('.dropdown-btn-post');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+
+    dropdownToggle.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dropdownToggle.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+});
+//bookmark code
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.bookmark-container');
+    const addIcon = container.querySelector('.add-bookmark');
+    const removeIcon = container.querySelector('.remove-bookmark');
+    const postId = addIcon.getAttribute('data-id');
+
+    container.addEventListener('click', (event) => {
+        event.stopPropagation();  // Prevent any other click actions if needed
+        const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+
+        // Immediately toggle the icons for instant feedback
+        addIcon.style.display = action === 'add' ? 'none' : 'inline';
+        removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+        fetch('/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.status !== 'added' && data.status !== 'removed') {
+                // If the server action failed, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // If there's an error, revert the icon change
+            addIcon.style.display = action === 'add' ? 'inline' : 'none';
+            removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{#    scripts for comment section#}
+    <script>
+    function openNav2() {
+        document.getElementById("mySidenav").style.width = "350px";
+    }
+
+    function closeNav2() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>
+{#script to delete#}
+    <script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    const deleteLinks = document.querySelectorAll('.delete-comment-link');
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const commentId = link.getAttribute('data-comment-id');
+            const form = document.getElementById(`delete-comment-${commentId}`);
+            form.submit();
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const editLinks = document.querySelectorAll('.edit-comment-link');
+    const modal = document.getElementById('editCommentModal');
+    const closeModal = document.querySelector('.modal .close');
+    const editForm = document.getElementById('edit-comment-form');
+    const editTextArea = document.getElementById('edit-comment-text');
+
+    editLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const postId = '{{ post.post_id }}';  // Get the post_id from the context
+            const commentId = link.getAttribute('data-comment-id');
+            const commentText = link.getAttribute('data-comment-text');
+            editTextArea.value = commentText;
+            editForm.action = `/post/${postId}/comment/${commentId}/edit/`;
+            modal.style.display = 'block';
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
+
+{#    like script#}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const likeButtons = document.querySelectorAll('.like-icon');
+
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.dataset.id;
+            const action = this.dataset.action;
+
+            fetch('{% url "like_view" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId, action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    document.querySelector(`.add-like[data-id="${postId}"]`).style.display = 'none';
+                    document.querySelector(`.remove-like[data-id="${postId}"]`).style.display = 'inline';
+                } else if (data.status === 'removed') {
+                    document.querySelector(`.add-like[data-id="${postId}"]`).style.display = 'inline';
+                    document.querySelector(`.remove-like[data-id="${postId}"]`).style.display = 'none';
+                }
+                document.getElementById(`likes-count-${postId}`).innerText = data.likes_count;
+                // Force a page reload
+            })
+            .catch(error => console.error('Error:', error));
+            {#window.location.reload();#}
+            // Added a delay before reloading the window
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);  // 1000 milliseconds = 1 seconds
+
+        });
+    });
+});
+</script>
+
+<!-- Include FontAwesome for the ellipsis icon -->
+<script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
+{#end of script for comment section#}
+{% endblock %}
+
