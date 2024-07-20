@@ -223,14 +223,17 @@ def edit_profile(request):
     if request.method == 'POST':
         form = UserDetailForm(request.POST, request.FILES, instance=user_detail)
         if form.is_valid():
-            form.save()
-            request.user.username = request.POST['name']
-            request.user.save()
-            return redirect('user_profile', username=request.user.username)
+            new_name = request.POST['name']
+            if User.objects.filter(username=new_name).exclude(pk=request.user.pk).exists():
+                form.add_error('name', 'This name is already taken. Please choose another.')
+            else:
+                form.save()
+                request.user.username = new_name
+                request.user.save()
+                return redirect('user_profile', username=request.user.username)
     else:
         form = UserDetailForm(instance=user_detail)
     return render(request, 'edit_profile.html', {'form': form, 'user_detail': user_detail})
-
 
 def search_posts(request):
     if 'q' in request.GET:
