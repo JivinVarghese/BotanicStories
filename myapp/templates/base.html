@@ -16,8 +16,9 @@
         	<a>
                 Hi, {{ request.user }}
             </a>
+            <a href="{% url 'user_profile' request.user.username %}">Profile</a>
         {% endif %}
-        <a href="{% url 'user_profile' request.user.username %}">Profile</a>
+
 
         <a href="#">Library</a>
         <a href="#">Stories</a>
