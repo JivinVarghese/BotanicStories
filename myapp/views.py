@@ -1,15 +1,21 @@
+
+import json
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
-
 from .forms import *
 from .models import *
-from django.http import JsonResponse
-import json
-from django.db.models import Q
+from .decorators import *
+
 
 
 # Create your views here.
@@ -18,6 +24,57 @@ def base(request):
     return render(request, 'base.html')
 
 
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        detail_form = UserDetailForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and detail_form.is_valid():
+            user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data['password'])
+            user.save()
+
+            user_detail = detail_form.save(commit=False)
+            user_detail.user = user
+            user_detail.save()
+
+            return redirect('login')  # or wherever you want to redirect after registration
+    else:
+        user_form = UserForm()
+        detail_form = UserDetailRegisterForm()
+
+    return render(request, 'register.html', {'user_form': user_form, 'detail_form': detail_form})
+
+
+@redirect_authenticated_user
+def custom_login(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to a success page or home page
+            else:
+                return HttpResponse('Invalid login or password')
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'login.html', {'form': form})
+
+@login_required
+def custom_logout(request):
+    logout(request)
+    return redirect('home')
+
+@login_required
+def user_analytics(request):
+    return render(request,'analytics.html')
+
+  
 @login_required
 def create_post(request):
     if request.method == 'POST':
@@ -299,3 +356,5 @@ def contact_view(request):
     # Handle GET request and render the contact page
     form = ContactForm()  # Create an empty form instance
     return render(request, 'contact.html', {'form': form})
+
+  

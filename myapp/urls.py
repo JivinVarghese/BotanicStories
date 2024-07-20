@@ -1,10 +1,34 @@
 # botanic/urls.py
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from myapp import views
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
                   path('', views.landing_page, name='landing_page'),
+                  path('register/', views.register, name='register'),
+                  path('login/', views.custom_login, name='login'),
+                  path('logout/', views.custom_logout, name='logout'),
+                  path('analytics/', views.user_analytics, name='analytics'),
+                  path('password_change/',
+                       auth_views.PasswordChangeView.as_view(template_name="password_change.html"),
+                       name='password_change'),
+                  path('password_change_done/',
+                       auth_views.PasswordChangeDoneView.as_view(template_name="password_change_done.html"),
+                       name='password_change_done'),
+                  path('reset_password/',
+                       auth_views.PasswordResetView.as_view(template_name="password_reset.html"),
+                       name='reset_password'),
+                  path('reset_password_done/',
+                       auth_views.PasswordResetDoneView.as_view(template_name="password_reset_sent.html"),
+                       name='password_reset_done'),
+                  path('reset/<uidb64>/<token>/',
+                       auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_form.html"),
+                       name='password_reset_confirm'),
+                  path('reset_password_complete/',
+                       auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),
+                       name='password_reset_complete'),
                   path('home/', views.home, name='home'),
                   path('create_post/', views.create_post, name='create_post'),
                   path('post/<int:post_id>/', views.view_post, name='view_post'),
@@ -23,3 +47,4 @@ urlpatterns = [
                   path('contact/', views.contact_view, name='contact'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

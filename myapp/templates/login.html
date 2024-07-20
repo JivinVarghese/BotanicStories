@@ -1,0 +1,58 @@
+{% extends 'base.html' %} {% block title %}User Login{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Login</h3>
+                        <p class="text-center">Share your green insights and connect with nature enthusiasts</p>
+                        <form method="POST" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            {{ form.non_field_errors }}
+                            <div class="form-group">
+                                {{ form.username.as_widget }}
+                                {{ form.username.errors }}
+                            </div>
+                            <div class="form-group position-relative">
+                                {{ form.password.as_widget }}
+                                {{ form.password.errors }}
+                                <a type="button" class="position-absolute" onclick="togglePassword()" id="togglePassword"  style="right: 10px; top: 50%; transform: translateY(-50%);">
+                                    Show
+                                </a>
+                            </div>
+                            <p><a href="{% url 'register' %}">Register</a> if you don't have an account.</p>
+                            <small class="form-text text-muted text-right">
+                                <a href="{% url 'reset_password' %}">Forgot password?</a>
+                            </small>
+
+                            <button class="btn btn-primary btn-block mt-2" type="submit">Login</button>
+{#                            <div class="form-group">#}
+{#                                {{ form.as_p }}#}
+{#                            </div>#}
+
+
+                        </form>
+                        <script>
+                            function togglePassword() {
+                              let show_hide_link = document.getElementById("togglePassword");
+                              let password_field = document.getElementById("id_password")
+
+                              if (password_field.type === "password") {
+                                password_field.type = "text"
+                                show_hide_link.textContent = "Hide"
+                              } else {
+                                password_field.type = "password"
+                                show_hide_link.textContent = "Show"
+                              }
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
