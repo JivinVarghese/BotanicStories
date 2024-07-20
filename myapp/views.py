@@ -252,3 +252,20 @@ def about(request):
 
 def landing_page(request):
     return render(request, 'landing_page.html')
+
+
+@csrf_exempt
+def contact_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        form = ContactForm(data)
+
+        if form.is_valid():
+            contact = form.save()  # This should save the contact to the database
+            return JsonResponse({'status': 'success', 'message': 'Your message has been submitted successfully!'}, status=201)
+        else:
+            return JsonResponse({'error': form.errors}, status=400)
+
+    # Handle GET request and render the contact page
+    form = ContactForm()  # Create an empty form instance
+    return render(request, 'contact.html', {'form': form})
