@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 
 from .forms import *
 from .models import *
@@ -125,15 +126,23 @@ def generate_post_data(posts, user):
 
 
 def home(request):
-    posts = Post.objects.all().order_by('-create_date')  # Order posts by creation date, newest first
-    paginator = Paginator(posts, 10)  # Show 10 posts per page
+    posts = Post.objects.all().order_by('-create_date')
+    paginator = Paginator(posts, 3)
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        post_data = generate_post_data(page_obj, request.user)
+        html = render_to_string('post_list.html', {'posts': post_data})
+        return JsonResponse({
+            'html': html,
+            'has_next': page_obj.has_next(),
+            'num_posts': len(post_data)
+        })
 
+    page_obj = paginator.get_page(1)
     post_data = generate_post_data(page_obj, request.user)
     return render(request, 'home.html', {'posts': post_data, 'page_obj': page_obj})
-
 
 @csrf_exempt
 def bookmark_view(request):
