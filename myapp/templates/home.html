@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block content %}
+<div id="refresh-indicator" class="refresh-indicator">
+    <div class="refresh-spinner"></div>
+    <span>Release to refresh</span>
+</div>
 <div class="container">
     <div id="post-list">
         {% include "post_list.html" %}
@@ -11,7 +15,6 @@
     </div>
 </div>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     let page = 1;
@@ -19,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let allPostsLoaded = false;
     const postList = document.getElementById('post-list');
     const loadingIndicator = document.getElementById('loading');
+    const refreshIndicator = document.getElementById('refresh-indicator');
+    let startY = 0;
+    let pullDistance = 0;
+    const pullThreshold = 100; // Pixels to pull before triggering refresh
 
     function loadMorePosts() {
         if (loading || allPostsLoaded) return;
@@ -60,57 +67,130 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachEventListeners() {
         document.querySelectorAll('.bookmark-container').forEach(container => {
-            container.addEventListener('click', (event) => {
-                event.stopPropagation();  // Prevent triggering the post click event
-                const addIcon = container.querySelector('.add-bookmark');
-                const removeIcon = container.querySelector('.remove-bookmark');
-                const postId = addIcon.getAttribute('data-id');
-                const action = addIcon.style.display === 'none' ? 'remove' : 'add';
-
-                // Immediately toggle the icons for instant feedback
-                addIcon.style.display = action === 'add' ? 'none' : 'inline';
-                removeIcon.style.display = action === 'add' ? 'inline' : 'none';
-
-                fetch('/bookmark/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({ post_id: postId, action: action })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    if (data.status !== 'added' && data.status !== 'removed') {
-                        // If the server action failed, revert the icon change
-                        addIcon.style.display = action === 'add' ? 'inline' : 'none';
-                        removeIcon.style.display = action === 'add' ? 'none' : 'inline';
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    // If there's an error, revert the icon change
-                    addIcon.style.display = action === 'add' ? 'inline' : 'none';
-                    removeIcon.style.display = action === 'add' ? 'none' : 'inline';
-                });
-            });
+            container.addEventListener('click', handleBookmarkClick);
         });
 
         document.querySelectorAll('.post-container').forEach(container => {
-            container.addEventListener('click', (event) => {
-                // Prevent navigation if the click was on the bookmark button
-                if (event.target.classList.contains('bookmark-button')) {
-                    return;
-                }
+            container.addEventListener('click', handlePostClick);
+        });
 
-                const postId = container.getAttribute('data-post-id');
-                window.location.href = `/post/${postId}/`;
-            });
+        document.querySelectorAll('.like-icon').forEach(icon => {
+            icon.addEventListener('click', handleLikeClick);
         });
     }
 
+    function handleBookmarkClick(event) {
+        event.stopPropagation();  // Prevent triggering the post click event
+        const container = event.currentTarget;
+        const addIcon = container.querySelector('.add-bookmark');
+        const removeIcon = container.querySelector('.remove-bookmark');
+        const postId = addIcon.getAttribute('data-id');
+        const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+
+        // Immediately toggle the icons for instant feedback
+        addIcon.style.display = action === 'add' ? 'none' : 'inline';
+        removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+        fetch('/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.status !== 'added' && data.status !== 'removed') {
+                // If the server action failed, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // If there's an error, revert the icon change
+            addIcon.style.display = action === 'add' ? 'inline' : 'none';
+            removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+        });
+    }
+
+    function handlePostClick(event) {
+        // Only navigate if the click was not on the bookmark container or its children
+        if (!event.target.closest('.bookmark-container') && !event.target.closest('.like-icon')) {
+            const postId = event.currentTarget.getAttribute('data-post-id');
+            window.location.href = `/post/${postId}/`;
+        }
+    }
+
+    function handleLikeClick(event) {
+        event.stopPropagation();  // Prevent triggering the post click event
+        const icon = event.currentTarget;
+        const postId = icon.closest('.post-container').getAttribute('data-post-id');
+        const action = icon.classList.contains('add-like') ? 'add' : 'remove';
+
+        fetch('/like/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                // Toggle the like icon
+                if (action === 'add') {
+                    icon.classList.remove('fa-regular', 'add-like');
+                    icon.classList.add('fa-solid', 'remove-like');
+                    icon.style.color = '#FF3040';
+                } else {
+                    icon.classList.remove('fa-solid', 'remove-like');
+                    icon.classList.add('fa-regular', 'add-like');
+                    icon.style.color = '';
+                }
+                // Update the like count
+                const likeCountSpan = icon.nextElementSibling;
+                likeCountSpan.textContent = data.likes_count;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Pull-to-refresh functionality
+    function handleTouchStart(e) {
+        startY = e.touches[0].pageY;
+    }
+
+    function handleTouchMove(e) {
+        const y = e.touches[0].pageY;
+        pullDistance = y - startY;
+
+        if (window.scrollY === 0 && pullDistance > 0 && pullDistance <= pullThreshold) {
+            refreshIndicator.style.transform = `translateY(${pullDistance - 60}px)`;
+            e.preventDefault();
+        }
+    }
+
+    function handleTouchEnd() {
+        if (pullDistance >= pullThreshold) {
+            // Trigger refresh
+            location.reload();
+        } else {
+            // Reset indicator position
+            refreshIndicator.style.transform = 'translateY(-60px)';
+        }
+        pullDistance = 0;
+    }
+
     window.addEventListener('scroll', handleScroll);
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
 
     attachEventListeners();  // Attach event listeners on initial load
 });
@@ -129,7 +209,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
 </script>
 
 <script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
