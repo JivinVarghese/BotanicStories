@@ -101,7 +101,7 @@ def initialize_session(request):
 @login_required
 def custom_logout(request):
     logout(request)
-    return redirect('home')
+    return redirect('landing_page')
 
 @login_required
 def user_analytics(request):
