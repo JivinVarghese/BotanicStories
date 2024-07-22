@@ -67,8 +67,8 @@
                         <span id="comments-count-{{ post.post_id }}">{{ post.comments_count }}</span>
                     </span>
                     <span class="bookmark-container">
-                        <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.post_id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
-                        <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                        <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.post_id }}" data-action="add" {% if is_bookmarked %}style="display:none;"{% endif %}>
+                        <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.post_id }}" data-action="remove" {% if not is_bookmarked %}style="display:none;"{% endif %}>
                     </span>
                 </div>
             {% if user.is_authenticated %}

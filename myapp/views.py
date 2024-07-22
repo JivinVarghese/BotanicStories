@@ -96,29 +96,32 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 
-# @login_required
+@login_required
 def view_post(request, post_id):
-    form = CommentForm(request.POST)
-    if request.method == 'POST':
+    form = CommentForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
         comment = form.save(commit=False)
         comment.post = get_object_or_404(Post, post_id=post_id)
-        comment.user = request.user  # Assigns the current logged-in user to the comment
+        comment.user = request.user
         comment.save()
-        return redirect('view_post', post_id=post_id)  # Prevents re-posting on refresh
-        # return redirect('create_post')  # Prevents re-posting on refresh
+        return redirect('view_post', post_id=post_id)
 
-    try:
-        # post = Post.objects.get(post_id=post_id)
-        post = get_object_or_404(Post, post_id=post_id)
-        tags = Tag.objects.filter(post=post)
-        user_detail = get_object_or_404(UserDetail, user=post.user)
-    except Post.DoesNotExist:
-        return redirect('')  # Redirect to create_post if post not found
+    post = get_object_or_404(Post, post_id=post_id)
+    tags = Tag.objects.filter(post=post)
+    user_detail = get_object_or_404(UserDetail, user=post.user)
     user_has_liked = Like.objects.filter(post=post, user=request.user).exists() if request.user.is_authenticated else False
-
     all_comments = Comment.objects.filter(post=post).order_by('-created_time')
-    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail,'user_has_liked': user_has_liked})
+    is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists() if request.user.is_authenticated else False
 
+    return render(request, 'view_post.html', {
+        'post': post,
+        'tags': tags,
+        'form': form,
+        'comments': all_comments,
+        'user_detail': user_detail,
+        'user_has_liked': user_has_liked,
+        'is_bookmarked': is_bookmarked
+    })
 
 @login_required
 def edit_post(request, post_id):
