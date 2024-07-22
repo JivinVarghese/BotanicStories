@@ -10,49 +10,93 @@
 
                         <form method="POST" enctype="multipart/form-data" >
                             {% csrf_token %}
-                            {{ user_form.non_field_errors }}
-                            {{ detail_form.non_field_errors }}
+                            {% if user_form.non_field_errors or detail_form.non_field_errors %}
+                            <div class="alert alert-danger mt-2">
+                                {{ user_form.non_field_errors }}
+                                {{ detail_form.non_field_errors }}
+                            </div>
+                            {% endif %}
+
                             <div class="form-group">
                                 {{ user_form.username.as_widget }}
-                                {{ user_form.username.errors }}
+                                {% if user_form.username.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ user_form.username.errors }}
+                                </div>
+                                {% endif %}
+
                             </div>
                             <div class="form-group">
                                 {{ user_form.email.as_widget }}
-                                {{ user_form.email.errors }}
+                                {% if user_form.email.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ user_form.email.errors }}
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="form-group position-relative">
                                 {{ user_form.password.as_widget }}
-                                {{ user_form.password.errors }}
+                                {% if user_form.password.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ user_form.password.errors }}
+                                </div>
+                                {% endif %}
                                 <a type="button" class="position-absolute" onclick="togglePassword(1)" id="togglePassword1"  style="right: 10px; top: 50%; transform: translateY(-50%);">
                                     Show
                                 </a>
                             </div>
                             <div class="form-group position-relative" >
                                 {{ user_form.confirm_password.as_widget }}
-                                {{ user_form.confirm_password.errors }}
+                                {% if user_form.confirm_password.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ user_form.confirm_password.errors }}
+                                </div>
+                                {% endif %}
                                 <a type="button" class="position-absolute" onclick="togglePassword(2)" id="togglePassword2" style="right: 10px; top: 50%; transform: translateY(-50%);">
                                     Show
                                 </a>
                             </div>
                             <div class="form-group">
                                 {{ detail_form.bio.as_widget }}
-                                {{ detail_form.bio.errors }}
+                                {% if detail_form.bio.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ detail_form.bio.errors }}
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="form-group">
                                 {{ detail_form.profile_pic.as_widget }}
-                                {{ detail_form.profile_pic.errors }}
+
+                                {% if detail_form.profile_pic.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ detail_form.profile_pic.errors }}
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="form-group">
                                 {{ detail_form.date_of_birth.as_widget }}
-                                {{ detail_form.date_of_birth.errors }}
+                                {% if detail_form.date_of_birth.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ detail_form.date_of_birth.errors }}
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="form-group">
                                 {{ detail_form.location.as_widget }}
-                                {{ detail_form.location.errors }}
+
+                                {% if detail_form.location.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ detail_form.location.errors }}
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="form-group">
                                 {{ detail_form.interests.as_widget }}
-                                {{ detail_form.interests.errors }}
+                                {% if detail_form.interests.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ detail_form.interests.errors }}
+                                </div>
+                                {% endif %}
                             </div>
 
 {#                            <div class="form-group">#}

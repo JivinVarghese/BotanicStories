@@ -105,6 +105,7 @@ class CustomLoginForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': 'Enter password',
     }))
+    agree_to_terms = forms.BooleanField(required=True, label="I agree to Terms and Conditions")
     
     
 
