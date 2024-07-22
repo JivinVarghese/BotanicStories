@@ -169,33 +169,37 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 
-# @login_required
+@login_required
 def view_post(request, post_id):
-    form = CommentForm(request.POST)
-    if request.method == 'POST':
+    form = CommentForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
         comment = form.save(commit=False)
         comment.post = get_object_or_404(Post, post_id=post_id)
-        comment.user = request.user  # Assigns the current logged-in user to the comment
+        comment.user = request.user
         comment.save()
         request.session['last_comment'] = comment.comment_id
         request.session['last_commented_post'] = comment.post.post_id
         request.session['comments_count'] += 1
         request.session.modified = True
         return redirect('view_post', post_id=post_id)  # Prevents re-posting on refresh
-        # return redirect('create_post')  # Prevents re-posting on refresh
+      
 
-    try:
-        # post = Post.objects.get(post_id=post_id)
-        post = get_object_or_404(Post, post_id=post_id)
-        tags = Tag.objects.filter(post=post)
-        user_detail = get_object_or_404(UserDetail, user=post.user)
-    except Post.DoesNotExist:
-        return redirect('')  # Redirect to create_post if post not found
+    post = get_object_or_404(Post, post_id=post_id)
+    tags = Tag.objects.filter(post=post)
+    user_detail = get_object_or_404(UserDetail, user=post.user)
     user_has_liked = Like.objects.filter(post=post, user=request.user).exists() if request.user.is_authenticated else False
-
     all_comments = Comment.objects.filter(post=post).order_by('-created_time')
-    return render(request, 'view_post.html', {'post': post, 'tags': tags, 'form': form, 'comments': all_comments, 'user_detail': user_detail,'user_has_liked': user_has_liked})
+    is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists() if request.user.is_authenticated else False
 
+    return render(request, 'view_post.html', {
+        'post': post,
+        'tags': tags,
+        'form': form,
+        'comments': all_comments,
+        'user_detail': user_detail,
+        'user_has_liked': user_has_liked,
+        'is_bookmarked': is_bookmarked
+    })
 
 @login_required
 def edit_post(request, post_id):
@@ -269,7 +273,7 @@ def generate_post_data(posts, user):
             'subtitle': post.content[:400],
             'date' : post.create_date,
             'tags': list(tags),
-            'image_url': post.image.url if post.image else '/static/images/default.jpg',
+            'image_url': post.image.url if post.image else None,
             'bookmarked': post.post_id in user_bookmarks,
             'likes_count': post.likes_count,
             'comments_count': post.comments_count
@@ -296,7 +300,30 @@ def home(request):
     post_data = generate_post_data(page_obj, request.user)
     return render(request, 'home.html', {'posts': post_data, 'page_obj': page_obj})
 
-# @csrf_exempt
+
+def library(request):
+    if not request.user.is_authenticated:
+        return render(request, 'library.html', {'posts': []})
+
+    bookmarked_posts = Post.objects.filter(bookmark__user=request.user).order_by('-create_date')
+    paginator = Paginator(bookmarked_posts, 3)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        post_data = generate_post_data(page_obj, request.user)
+        html = render_to_string('post_list.html', {'posts': post_data})
+        return JsonResponse({
+            'html': html,
+            'has_next': page_obj.has_next(),
+            'num_posts': len(post_data)
+        })
+
+    page_obj = paginator.get_page(1)
+    post_data = generate_post_data(page_obj, request.user)
+    return render(request, 'library.html', {'posts': post_data, 'page_obj': page_obj})
+
+@csrf_exempt
 def bookmark_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -364,8 +391,8 @@ def user_profile(request, username):
     user = get_object_or_404(User, username=username)
     user_detail, created = UserDetail.objects.get_or_create(user=user)
 
-    bookmarked_posts = Post.objects.filter(bookmark__user=user).distinct()
-    post_data = generate_post_data(bookmarked_posts, user)
+    user_posts = Post.objects.filter(user=user).distinct()  # Fetch posts created by the user
+    post_data = generate_post_data(user_posts, user)
 
     context = {
         'user': user,

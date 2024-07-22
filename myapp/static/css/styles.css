@@ -147,10 +147,26 @@ body {
     justify-content: space-between;
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px; /* Add margin between posts */
 }
 
+/* Hover effect only on home page */
+.home-page .post-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Content should take full width if there's no image */
 .post-content {
-    width: 75%;
+    flex: 1;
+    cursor: pointer;
+    padding-right: 20px; /* Add padding to separate text from the image */
+}
+
+.post-content.no-image {
+    width: 100%; /* Full width if no image */
+    padding-right: 0; /* Remove right padding if no image */
 }
 
 .post-title {
@@ -173,10 +189,15 @@ body {
     margin-right: 15px;
 }
 
+.post-image {
+    flex-shrink: 0; /* Prevent image from shrinking */
+}
+
 .post-image img {
-    width: 150px;
-    height: 100px;
+    width: 220px; /* Increased width */
+    height: 150px; /* Increased height */
     object-fit: cover;
+    cursor: pointer;
 }
 
 .post-header {
@@ -231,22 +252,15 @@ body {
     font-size: 12px;
 }
 
-.post-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
-    margin-bottom: 20px;
-}
-
-
 .bookmark-icon {
     width: 19px;  /* Adjust size as needed */
     height: 19px;  /* Adjust size as needed */
     cursor: pointer;
     float: right;
+}
 
+.bookmark-container {
+    cursor: pointer;
 }
 
 #loading {
@@ -259,6 +273,53 @@ body {
     height: 50px;
 }
 
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.refresh-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-60px);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.refresh-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #333;
+    border-top: 3px solid #f0f0f0;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.saved-posts-heading {
+    font-family: 'Tinos', serif; /* Change the font-family as per your preference */
+    font-size: 3em; /* Adjust the font size */
+    margin-top: 20px; /* Adjust the margin as needed */
+    color: #333; /* Adjust the color as needed */
+}
 
 /* Profile picture styling */
 .profile-picture {
@@ -374,6 +435,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     position: relative;
+    padding : 10px;
 }
 
 .card-title {
@@ -802,35 +864,12 @@ footer {
 
 /*create post */
 
-.create_post-body {
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.create_post-overlay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.create_post-modal {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+.create_post-container {
     max-width: 800px;
-    width: 100%;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     font-family: 'Noto Serif', serif;
 }
@@ -888,6 +927,27 @@ footer {
     font-family: 'Tinos', serif;
 }
 
+.create_post-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.create_post-publish-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.create_post-publish-btn:hover {
+    background-color: #45a049;
+}
+
 /* Placeholder styling */
 ::placeholder {
     color: #b3b3b1;
@@ -917,21 +977,17 @@ footer {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-.edit_post-overlay {
+.edit_post-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
 }
 
 .edit_post-modal {
@@ -1018,11 +1074,11 @@ footer {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
 }
+
 .edit_post-current-image {
     max-width: 20%;
     height: auto;
     display: block;
     margin-bottom: 10px;
     margin-left: 30%;
-
 }
