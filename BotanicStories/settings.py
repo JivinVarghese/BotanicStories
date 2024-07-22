@@ -65,7 +65,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myapp.middleware.RecentActivityMiddleware',
+    'myapp.middleware.PageVisitMiddleware',
 ]
+
+SESSION_COOKIE_AGE = 3600 * 24 * 30 # 30 days in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_PATH = '/'
 
 ROOT_URLCONF = 'BotanicStories.urls'
 
