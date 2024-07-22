@@ -45,6 +45,7 @@ urlpatterns = [
                   path('like/', views.like_view, name='like_view'),
                   path('about/', views.about, name='about'),
                   path('contact/', views.contact_view, name='contact'),
+                  path('library/', views.library, name='library')
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

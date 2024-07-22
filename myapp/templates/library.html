@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <body class="home-page">
+<div id="refresh-indicator" class="refresh-indicator">
+    <div class="refresh-spinner"></div>
+    <span>Release to refresh</span>
+</div>
+<div class="container">
+    <h1 class="saved-posts-heading">Your Saved Posts</h1> <!-- New Heading -->
+    <div id="post-list">
+        {% include "post_list.html" %}
+    </div>
+    <div id="loading" style="display: none;">
+        <img src="{% static 'icons/spinner.svg' %}" alt="Loading...">
+    </div>
+</div>
+    </body>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let page = 1;
+    let loading = false;
+    let allPostsLoaded = false;
+    const postList = document.getElementById('post-list');
+    const loadingIndicator = document.getElementById('loading');
+    const refreshIndicator = document.getElementById('refresh-indicator');
+    let startY = 0;
+    let pullDistance = 0;
+    const pullThreshold = 100; // Pixels to pull before triggering refresh
+
+    function loadMorePosts() {
+        if (loading || allPostsLoaded) return;
+        loading = true;
+        loadingIndicator.style.display = 'block';
+
+        fetch(`?page=${++page}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.num_posts > 0) {
+                postList.insertAdjacentHTML('beforeend', data.html);
+                attachEventListeners();  // Reattach event listeners to newly loaded posts
+            }
+            loading = false;
+            loadingIndicator.style.display = 'none';
+
+            if (!data.has_next || data.num_posts === 0) {
+                allPostsLoaded = true;
+                window.removeEventListener('scroll', handleScroll);
+                loadingIndicator.style.display = 'none';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            loading = false;
+            loadingIndicator.style.display = 'none';
+        });
+    }
+
+    function handleScroll() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+            loadMorePosts();
+        }
+    }
+
+    function attachEventListeners() {
+        document.querySelectorAll('.bookmark-container').forEach(container => {
+            container.addEventListener('click', handleBookmarkClick);
+        });
+
+        document.querySelectorAll('.post-container').forEach(container => {
+            container.addEventListener('click', handlePostClick);
+        });
+
+        document.querySelectorAll('.like-icon').forEach(icon => {
+            icon.addEventListener('click', handleLikeClick);
+        });
+    }
+
+    function handleBookmarkClick(event) {
+        event.stopPropagation();  // Prevent triggering the post click event
+        const container = event.currentTarget;
+        const addIcon = container.querySelector('.add-bookmark');
+        const removeIcon = container.querySelector('.remove-bookmark');
+        const postId = addIcon.getAttribute('data-id');
+        const action = addIcon.style.display === 'none' ? 'remove' : 'add';
+
+        // Immediately toggle the icons for instant feedback
+        addIcon.style.display = action === 'add' ? 'none' : 'inline';
+        removeIcon.style.display = action === 'add' ? 'inline' : 'none';
+
+        fetch('/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.status !== 'added' && data.status !== 'removed') {
+                // If the server action failed, revert the icon change
+                addIcon.style.display = action === 'add' ? 'inline' : 'none';
+                removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // If there's an error, revert the icon change
+            addIcon.style.display = action === 'add' ? 'inline' : 'none';
+            removeIcon.style.display = action === 'add' ? 'none' : 'inline';
+        });
+    }
+
+    function handlePostClick(event) {
+        // Only navigate if the click was not on the bookmark container or its children
+        if (!event.target.closest('.bookmark-container') && !event.target.closest('.like-icon')) {
+            const postId = event.currentTarget.getAttribute('data-post-id');
+            window.location.href = `/post/${postId}/`;
+        }
+    }
+
+    function handleLikeClick(event) {
+        event.stopPropagation();  // Prevent triggering the post click event
+        const icon = event.currentTarget;
+        const postId = icon.closest('.post-container').getAttribute('data-post-id');
+        const action = icon.classList.contains('add-like') ? 'add' : 'remove';
+
+        fetch('/like/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ post_id: postId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                // Toggle the like icon
+                if (action === 'add') {
+                    icon.classList.remove('fa-regular', 'add-like');
+                    icon.classList.add('fa-solid', 'remove-like');
+                    icon.style.color = '#FF3040';
+                } else {
+                    icon.classList.remove('fa-solid', 'remove-like');
+                    icon.classList.add('fa-regular', 'add-like');
+                    icon.style.color = 'black';
+                }
+
+                // Update the likes count
+                const likesCountElement = icon.closest('.post-container').querySelector('.likes-count');
+                let likesCount = parseInt(likesCountElement.textContent, 10);
+                likesCountElement.textContent = action === 'add' ? likesCount + 1 : likesCount - 1;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    function getCookie(name) {
+        const cookieValue = document.cookie.split(';').find(cookie => cookie.trim().startsWith(`${name}=`));
+        return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : '';
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    attachEventListeners();
+
+    // Pull-to-refresh functionality
+    window.addEventListener('touchstart', (event) => {
+        startY = event.touches[0].clientY;
+        pullDistance = 0;
+    });
+
+    window.addEventListener('touchmove', (event) => {
+        pullDistance = event.touches[0].clientY - startY;
+        if (pullDistance > 0) {
+            refreshIndicator.style.transform = `translateY(${pullDistance}px)`;
+        }
+    });
+
+    window.addEventListener('touchend', () => {
+        if (pullDistance > pullThreshold) {
+            location.reload();
+        }
+        refreshIndicator.style.transform = 'translateY(0px)';
+    });
+});
+</script>
+{% endblock %}

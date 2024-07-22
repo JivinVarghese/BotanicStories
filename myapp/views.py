@@ -213,6 +213,29 @@ def home(request):
     post_data = generate_post_data(page_obj, request.user)
     return render(request, 'home.html', {'posts': post_data, 'page_obj': page_obj})
 
+
+def library(request):
+    if not request.user.is_authenticated:
+        return render(request, 'library.html', {'posts': []})
+
+    bookmarked_posts = Post.objects.filter(bookmark__user=request.user).order_by('-create_date')
+    paginator = Paginator(bookmarked_posts, 3)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        post_data = generate_post_data(page_obj, request.user)
+        html = render_to_string('post_list.html', {'posts': post_data})
+        return JsonResponse({
+            'html': html,
+            'has_next': page_obj.has_next(),
+            'num_posts': len(post_data)
+        })
+
+    page_obj = paginator.get_page(1)
+    post_data = generate_post_data(page_obj, request.user)
+    return render(request, 'library.html', {'posts': post_data, 'page_obj': page_obj})
+
 @csrf_exempt
 def bookmark_view(request):
     if request.method == 'POST':

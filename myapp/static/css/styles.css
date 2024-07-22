@@ -314,7 +314,12 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-
+.saved-posts-heading {
+    font-family: 'Tinos', serif; /* Change the font-family as per your preference */
+    font-size: 3em; /* Adjust the font size */
+    margin-top: 20px; /* Adjust the margin as needed */
+    color: #333; /* Adjust the color as needed */
+}
 
 /* Profile picture styling */
 .profile-picture {
