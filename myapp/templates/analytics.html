@@ -1,5 +1,197 @@
 {% extends 'base.html' %} {% block title %}User Analytics{% endblock %}
 {% block content %}
-    <h2>User Analytics</h2>
+    <div class="container mt-2 text-center">
+
+        <h2>Analytics Dashboard</h2>
+    <p class="text-left">The last login was on  {{ session_data.last_login }} UTC</p>
+    </div>
+{#    The first row will have 3 cards #}
+{#    The first card number of pages visited today#}
+{#    The second one number of posts created#}
+{#    The third one last post created#}
+    <div class="container mt-2">
+        <div class="row justify-content-center">
+
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Number of Page Visits Today</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Keep Exploring!</h6>
+                <h1 class="text-center">{{ today_count }}</h1>
+
+              </div>
+            </div>
+            </div>
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Blogs Written by You</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">We Don't Want You to Stop!</h6>
+                <h1 class=" text-center">{{ session_data.created_posts_count }}</h1>
+                  <div class="text-center mt-2">
+                      <a href="{% url 'create_post' %}" class="btn btn-primary">Write Today!</a>
+                  </div>
+
+              </div>
+            </div>
+            </div>
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                {#                  Add a new block for new user when post count is 0 #}
+                  {% if session_data.created_posts_count %}
+                <h5 class="card-title">Glimpse of Last Post</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">You Wrote a Blog Post About...</h6>
+                <i class="card-text">"{{ post_titles.last_post_title }}"</i>
+                  {% else %}
+                      <h5 class="card-title">You haven't posted anything yet!</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Write and share your thoughts!</h6>
+                      <div class="text-center mt-2">
+                      <a href="{% url 'home' %}" class="btn btn-primary">Get Inspiration!</a>
+                  </div>
+
+                  {% endif %}
+
+
+
+              </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    {#    The second row will have 3 cards #}
+{#    The first card number of saved posts #}
+{#    The second one last saved post#}
+{#    The third one number of liked posts#}
+    <div class="container mt-2">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Number of Saved Posts</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Gems in Your Collection</h6>
+                <h1 class="text-center">{{ session_data.saved_posts_count }}</h1>
+                <div class="text-center">
+                  <a href="#" class="btn btn-primary">Saved Library</a>
+                </div>
+
+              </div>
+            </div>
+            </div>
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Liked Posts</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">You have shown love to these number of posts</h6>
+                <h1 class="text-center">{{ session_data.liked_posts_count }}</h1>
+              </div>
+            </div>
+            </div>
+
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Number of Times You Shared Opinions</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">You love to discuss!</h6>
+                <h1 class="text-center">{{ session_data.comments_count}}</h1>
+              </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container mt-2">
+        <div class="row justify-content-center">
+
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Most Recent Gem</h5>
+
+                  {% if session_data.saved_posts_count %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">You Saved a Post About...</h6>
+                      <i class="card-text">"{{ post_titles.last_saved_post_title }}"</i>
+                  <div class="text-center">
+                      <a href="{% url 'view_post' post_id=session_data.last_saved_post %}" class="btn btn-primary">Read Again!</a>
+                  </div>
+
+                  {% else %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">You haven't saved any posts</h6>
+                      <p>Grow your collection!</p>
+                      <div class="text-center">
+                      <a href="{% url 'home'  %}" class="btn btn-primary">Explore</a>
+                  </div>
+
+                  {% endif %}
+
+
+              </div>
+            </div>
+            </div>
+
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Recently Liked</h5>
+                  {% if session_data.liked_posts_count %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">The last post you liked was about...</h6>
+                <i class="card-text">"{{ post_titles.last_liked_post_title }}"</i>
+                  <div class="text-center mt-2">
+                    <a href="{% url 'view_post' post_id=session_data.last_liked_post %}" class="btn btn-primary">Read Again!</a>
+                  </div>
+                  {% else %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">You haven't liked any posts</h6>
+                      <p>Show some love to other creators!</p>
+                      <div class="text-center">
+                      <a href="{% url 'home'  %}" class="btn btn-primary">Explore</a>
+                  </div>
+                  {% endif %}
+
+
+              </div>
+            </div>
+            </div>
+{#            #}
+            <div class="col-md-4">
+                {#    Card starts #}
+                <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Last discussion</h5>
+                  {% if session_data.comments_count %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">You last commented on post titled <i>"{{ post_titles.last_commented_post_title }}"</i></h6>
+                <i class="card-text">"{{ post_titles.last_comment }}"</i>
+                  <div class="text-center mt-2">
+                      <a href="{% url 'view_post' post_id=session_data.last_commented_post %}" class="btn btn-primary">Check Out</a>
+                  </div>
+
+                  {% else %}
+                      <h6 class="card-subtitle mb-2 text-body-secondary">You haven't shared your opinions</h6>
+                      <p>Share one today!</p>
+                      <div class="text-center">
+                      <a href="{% url 'home'  %}" class="btn btn-primary">Explore</a>
+                  </div>
+                  {% endif %}
+
+              </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
