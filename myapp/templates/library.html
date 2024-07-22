@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -8,7 +9,7 @@
     <span>Release to refresh</span>
 </div>
 <div class="container">
-    <h1 class="saved-posts-heading">Your Saved Posts</h1> <!-- New Heading -->
+        <h1 class="saved-posts-heading">Your Saved Posts</h1>
     <div id="post-list">
         {% include "post_list.html" %}
     </div>
@@ -151,13 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     icon.classList.remove('fa-solid', 'remove-like');
                     icon.classList.add('fa-regular', 'add-like');
-                    icon.style.color = 'black';
+                    icon.style.color = '';
                 }
-
-                // Update the likes count
-                const likesCountElement = icon.closest('.post-container').querySelector('.likes-count');
-                let likesCount = parseInt(likesCountElement.textContent, 10);
-                likesCountElement.textContent = action === 'add' ? likesCount + 1 : likesCount - 1;
+                // Update the like count
+                const likeCountSpan = icon.nextElementSibling;
+                likeCountSpan.textContent = data.likes_count;
             }
         })
         .catch((error) => {
@@ -165,33 +164,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function getCookie(name) {
-        const cookieValue = document.cookie.split(';').find(cookie => cookie.trim().startsWith(`${name}=`));
-        return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : '';
+    // Pull-to-refresh functionality
+    function handleTouchStart(e) {
+        startY = e.touches[0].pageY;
+    }
+
+    function handleTouchMove(e) {
+        const y = e.touches[0].pageY;
+        pullDistance = y - startY;
+
+        if (window.scrollY === 0 && pullDistance > 0 && pullDistance <= pullThreshold) {
+            refreshIndicator.style.transform = `translateY(${pullDistance - 60}px)`;
+            e.preventDefault();
+        }
+    }
+
+    function handleTouchEnd() {
+        if (pullDistance >= pullThreshold) {
+            // Trigger refresh
+            location.reload();
+        } else {
+            // Reset indicator position
+            refreshIndicator.style.transform = 'translateY(-60px)';
+        }
+        pullDistance = 0;
     }
 
     window.addEventListener('scroll', handleScroll);
-    attachEventListeners();
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
 
-    // Pull-to-refresh functionality
-    window.addEventListener('touchstart', (event) => {
-        startY = event.touches[0].clientY;
-        pullDistance = 0;
-    });
-
-    window.addEventListener('touchmove', (event) => {
-        pullDistance = event.touches[0].clientY - startY;
-        if (pullDistance > 0) {
-            refreshIndicator.style.transform = `translateY(${pullDistance}px)`;
-        }
-    });
-
-    window.addEventListener('touchend', () => {
-        if (pullDistance > pullThreshold) {
-            location.reload();
-        }
-        refreshIndicator.style.transform = 'translateY(0px)';
-    });
+    attachEventListeners();  // Attach event listeners on initial load
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
+
+<script src="https://kit.fontawesome.com/c4e4311d16.js" crossorigin="anonymous"></script>
 {% endblock %}
