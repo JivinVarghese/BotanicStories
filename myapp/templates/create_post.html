@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="create_post-overlay">
-    <div class="create_post-modal">
-        <form method="post" enctype="multipart/form-data" id="post-form">
-            {% csrf_token %}
-            <div class="create_post-title-container">
-                {{ form.post_title }}
-            </div>
-            <div class="create_post-content-container">
-                {{ form.content }}
-            </div>
-            <div class="create_post-image-upload">
-                <label for="image-upload" class="create_post-image-upload-label">+</label>
-                <input type="file" id="image-upload" name="image" style="display: none;">
-                <span id="image-upload-filename" class="create_post-image-upload-filename"></span>
-            </div>
-            <div class="create_post-tags-container">
-                {{ form.tags }}
-            </div>
-            <div class="create_post-footer">
-                <button type="button" id="publish-btn" class="create_post-publish-btn">Publish</button>
-            </div>
-        </form>
-    </div>
+<div class="create_post-container">
+    <form method="post" enctype="multipart/form-data" id="post-form">
+        {% csrf_token %}
+        <div class="create_post-title-container">
+            {{ form.post_title }}
+        </div>
+        <div class="create_post-content-container">
+            {{ form.content }}
+        </div>
+        <div class="create_post-image-upload">
+            <label for="image-upload" class="create_post-image-upload-label">+</label>
+            <input type="file" id="image-upload" name="image" style="display: none;">
+            <span id="image-upload-filename" class="create_post-image-upload-filename"></span>
+        </div>
+        <div class="create_post-tags-container">
+            {{ form.tags }}
+        </div>
+        <div class="create_post-footer">
+            <button type="button" id="publish-btn" class="create_post-publish-btn">Publish</button>
+        </div>
+    </form>
 </div>
 
 <script>

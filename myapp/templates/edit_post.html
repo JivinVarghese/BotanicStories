@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="edit_post-overlay">
+<div class="edit_post-container">
     <div class="edit_post-modal">
         <form method="post" enctype="multipart/form-data" id="post-form">
             {% csrf_token %}
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add placeholder for tags
     const tagsInput = document.querySelector('input[name="tags"]');
-        tagsInput.placeholder = 'Add tags';
+    tagsInput.placeholder = 'Add tags';
 
     // Auto-expand textarea
     contentTextarea.addEventListener('input', function() {

@@ -1,7 +1,7 @@
 {% load static %}
 {% for post in posts %}
 <div class="post-container glassmorphism" data-post-id="{{ post.id }}">
-    <div class="post-content">
+    <div class="post-content {% if not post.image_url %}no-image{% endif %}">
         <div class="post-header">
             <div class="user-info">
                 {% if post.user_image %}
@@ -23,23 +23,26 @@
         <div class="post-meta">
             <span>{{ post.date | date:"F d, Y" }}</span>
             <span>
-                <i class="fa-regular fa-heart like-icon add-like"
-                    style="font-size: 19px"
-                ></i>
-            <span>{{ post.likes_count }}</span></span>
+                <i class="fa-regular fa-heart like-icon add-like" style="font-size: 19px"></i>
+                <span>{{ post.likes_count }}</span>
+            </span>
             <span>
-                <i class="fa-regular fa-comment"
-                    style="font-size: 19px"
-                ></i>
-                <span>{{ post.comments_count }}</span></span>
+                <i class="fa-regular fa-comment" style="font-size: 19px"></i>
+                <span>{{ post.comments_count }}</span>
+            </span>
             <span class="bookmark-container">
-            <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
-            <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
+                <img src="{% static 'icons/notBookmark.png' %}" alt="Add Bookmark" class="bookmark-icon add-bookmark" data-id="{{ post.id }}" data-action="add" {% if post.bookmarked %}style="display:none;"{% endif %}>
+                <img src="{% static 'icons/bookmark.png' %}" alt="Remove Bookmark" class="bookmark-icon remove-bookmark" data-id="{{ post.id }}" data-action="remove" {% if not post.bookmarked %}style="display:none;"{% endif %}>
             </span>
         </div>
     </div>
+   {% if post.image_url %}
     <div class="post-image">
         <img src="{{ post.image_url }}" alt="Post Image">
     </div>
+{% else %}
+    <!-- Debugging: This will show if image_url is None or empty -->
+    <div style="display:none;">No image available for this post</div>
+{% endif %}
 </div>
 {% endfor %}

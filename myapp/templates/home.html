@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+    <body class="home-page">
 <div id="refresh-indicator" class="refresh-indicator">
     <div class="refresh-spinner"></div>
     <span>Release to refresh</span>
@@ -14,7 +15,7 @@
         <img src="{% static 'icons/spinner.svg' %}" alt="Loading...">
     </div>
 </div>
-
+    </body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     let page = 1;

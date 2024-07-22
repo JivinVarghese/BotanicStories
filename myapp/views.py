@@ -186,7 +186,7 @@ def generate_post_data(posts, user):
             'subtitle': post.content[:400],
             'date' : post.create_date,
             'tags': list(tags),
-            'image_url': post.image.url if post.image else '/static/images/default.jpg',
+            'image_url': post.image.url if post.image else None,
             'bookmarked': post.post_id in user_bookmarks,
             'likes_count': post.likes_count,
             'comments_count': post.comments_count
@@ -265,8 +265,8 @@ def user_profile(request, username):
     user = get_object_or_404(User, username=username)
     user_detail, created = UserDetail.objects.get_or_create(user=user)
 
-    bookmarked_posts = Post.objects.filter(bookmark__user=user).distinct()
-    post_data = generate_post_data(bookmarked_posts, user)
+    user_posts = Post.objects.filter(user=user).distinct()  # Fetch posts created by the user
+    post_data = generate_post_data(user_posts, user)
 
     context = {
         'user': user,

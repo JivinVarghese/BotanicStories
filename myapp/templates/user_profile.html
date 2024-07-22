@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+    <body class="user-profile-page">
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8 text-center profile-container">
@@ -17,7 +18,7 @@
         </div>
     </div>
     <div class="row justify-content-center mt-1">
-        <div class="col-md-8">
+        <div class="col-md-19">
             <ul class="nav nav-tabs justify-content-center" id="profileTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
@@ -30,7 +31,7 @@
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Reading List</h5>
+                            <h5 class="card-title">My Posts</h5> <!-- Changed the title here -->
                             {% if posts %}
                                 {% for post in posts %}
                                     <div class="post-container" data-post-id="{{ post.id }}">
@@ -54,7 +55,7 @@
                                             <p class="post-subtitle">{{ post.subtitle }}</p>
                                             <div class="post-meta">
                                                 <span>
-                                                    <i class="fa-solid fa-heart like-icon remove-like" style="color: #FF3040; font-size: 19px"></i>
+                                                    <i class="fa-regular fa-heart like-icon add-like" style="font-size: 19px"></i>
                                                     <span>{{ post.likes_count }}</span>
                                                 </span>
                                                 <span>
@@ -73,7 +74,7 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p class="card-text">No bookmarked stories</p>
+                                <p class="card-text">No posts found</p> <!-- Changed the message here -->
                             {% endif %}
                         </div>
                     </div>
@@ -82,6 +83,7 @@
         </div>
     </div>
 </div>
+    </body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // Bookmark functionality
@@ -111,9 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.status === 'removed') {
                     // Remove the post container from the DOM
                     container.closest('.post-container').remove();
-                    // If no posts left, show "No bookmarked stories" message
+                    // If no posts left, show "No posts found" message
                     if (document.querySelectorAll('.post-container').length === 0) {
-                        document.querySelector('.card-body').innerHTML = '<p class="card-text">No bookmarked stories</p>';
+                        document.querySelector('.card-body').innerHTML = '<p class="card-text">No posts found</p>';
                     }
                 } else if (data.status !== 'added') {
                     // If the server action failed, revert the icon change
