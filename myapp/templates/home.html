@@ -74,10 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.post-container').forEach(container => {
             container.addEventListener('click', handlePostClick);
         });
-
-        document.querySelectorAll('.like-icon').forEach(icon => {
-            icon.addEventListener('click', handleLikeClick);
-        });
     }
 
     function handleBookmarkClick(event) {
@@ -119,47 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handlePostClick(event) {
         // Only navigate if the click was not on the bookmark container or its children
-        if (!event.target.closest('.bookmark-container') && !event.target.closest('.like-icon')) {
+        if (!event.target.closest('.bookmark-container')) {
             const postId = event.currentTarget.getAttribute('data-post-id');
             window.location.href = `/post/${postId}/`;
         }
-    }
-
-    function handleLikeClick(event) {
-        event.stopPropagation();  // Prevent triggering the post click event
-        const icon = event.currentTarget;
-        const postId = icon.closest('.post-container').getAttribute('data-post-id');
-        const action = icon.classList.contains('add-like') ? 'add' : 'remove';
-
-        fetch('/like/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({ post_id: postId, action: action })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                // Toggle the like icon
-                if (action === 'add') {
-                    icon.classList.remove('fa-regular', 'add-like');
-                    icon.classList.add('fa-solid', 'remove-like');
-                    icon.style.color = '#FF3040';
-                } else {
-                    icon.classList.remove('fa-solid', 'remove-like');
-                    icon.classList.add('fa-regular', 'add-like');
-                    icon.style.color = '';
-                }
-                // Update the like count
-                const likeCountSpan = icon.nextElementSibling;
-                likeCountSpan.textContent = data.likes_count;
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
     }
 
     // Pull-to-refresh functionality
