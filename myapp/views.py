@@ -1,4 +1,4 @@
-
+from datetime import datetime
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
@@ -24,11 +24,11 @@ def base(request):
     return render(request, 'base.html')
 
 
-
+@redirect_authenticated_user
 def register(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST)
-        detail_form = UserDetailForm(request.POST, request.FILES)
+        detail_form = UserDetailRegisterForm(request.POST, request.FILES)
 
         if user_form.is_valid() and detail_form.is_valid():
             user = user_form.save(commit=False)
@@ -38,7 +38,7 @@ def register(request):
             user_detail = detail_form.save(commit=False)
             user_detail.user = user
             user_detail.save()
-
+            messages.success(request, 'Registration successful! You can now log in.')
             return redirect('login')  # or wherever you want to redirect after registration
     else:
         user_form = UserForm()
@@ -57,7 +57,12 @@ def custom_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')  # Redirect to a success page or home page
+                initialize_session(request)
+                response = redirect('home')
+                response.set_cookie('user-consent', 'true', max_age=365 * 24 * 60 * 60)  # Cookie valid for one year
+                response.set_cookie('username', user.username, max_age=365 * 24 * 60 * 60)
+                response.set_cookie('user_email', user.email, max_age=365 * 24 * 60 * 60)
+                return response  # Redirect to a success page or home page
             else:
                 return HttpResponse('Invalid login or password')
     else:
@@ -65,14 +70,79 @@ def custom_login(request):
 
     return render(request, 'login.html', {'form': form})
 
+
+def initialize_session(request):
+    user = request.user
+    request.session['last_login'] = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+    request.session['created_posts_count'] = Post.objects.filter(user=user).count()
+    request.session['last_created_post'] = (
+        Post.objects.filter(user=user).order_by('-create_date').values_list('post_id', flat=True).first())
+
+    request.session['liked_posts_count'] = Like.objects.filter(user=user).count()
+    # returns a post not an id
+    last_liked_post = Like.objects.filter(user=user).last()
+    # here we extract the id of the post and store it
+    request.session['last_liked_post'] = last_liked_post.post.post_id if last_liked_post else None
+
+    request.session['saved_posts_count'] = Bookmark.objects.filter(user=user).count()
+    request.session['comments_count'] = Comment.objects.filter(user=user).count()
+    # returns a post
+    last_saved_post = Bookmark.objects.filter(user=user).last()
+    # here we extract the id of the post and store it
+    request.session['last_saved_post'] = last_saved_post.post.post_id if last_saved_post else None
+
+    last_comment = Comment.objects.filter(user=user).order_by('-created_time').first()
+    request.session['last_comment'] = last_comment.comment_id if last_comment else None
+    request.session['last_commented_post'] = last_comment.post.post_id if last_comment else None
+
+    request.session.modified = True
+
+
 @login_required
 def custom_logout(request):
     logout(request)
-    return redirect('home')
+    return redirect('landing_page')
 
 @login_required
 def user_analytics(request):
-    return render(request,'analytics.html')
+    session_data = dict(request.session)
+
+    # Retrieve post IDs from the session
+    last_created_post = session_data.get('last_created_post')
+    last_commented_post = session_data.get('last_commented_post')
+    last_comment = session_data.get('last_comment')
+    last_saved_post = session_data.get('last_saved_post')
+    last_liked_post = session_data.get('last_liked_post')
+
+    # Create a dictionary to store post titles
+    post_titles = {}
+
+    if last_created_post:
+        last_post = get_object_or_404(Post, post_id=last_created_post)
+        post_titles['last_post_title'] = last_post.post_title
+
+    if last_commented_post:
+        last_post = get_object_or_404(Post, post_id=last_commented_post)
+        post_titles['last_commented_post_title'] = last_post.post_title
+
+    if last_comment:
+        last_comment = get_object_or_404(Comment, comment_id=last_comment)
+        post_titles['last_comment'] = last_comment.comment_text
+
+    if last_saved_post:
+        last_post = get_object_or_404(Post, post_id=last_saved_post)
+        post_titles['last_saved_post_title'] = last_post.post_title
+
+    if last_liked_post:
+        last_post = get_object_or_404(Post, post_id=last_liked_post)
+        post_titles['last_liked_post_title'] = last_post.post_title
+
+    page_visit = dict(request.session['page_visits'])
+    today_date = datetime.now().strftime('%Y-%m-%d')
+    today_count = page_visit.get(today_date)
+
+    return render(request, 'analytics.html',
+                  {'session_data': dict(request.session), 'post_titles': post_titles, 'today_count': today_count})
 
   
 @login_required
@@ -89,6 +159,9 @@ def create_post(request):
             for tag_name in tags:
                 Tag.objects.create(post=post, tag_name=tag_name.strip())
 
+            request.session['created_posts_count'] += 1
+            request.session['last_created_post'] = post.post_id
+            request.session.modified = True
             return redirect('view_post', post_id=post.post_id)
     else:
         form = PostForm()
@@ -104,7 +177,12 @@ def view_post(request, post_id):
         comment.post = get_object_or_404(Post, post_id=post_id)
         comment.user = request.user
         comment.save()
-        return redirect('view_post', post_id=post_id)
+        request.session['last_comment'] = comment.comment_id
+        request.session['last_commented_post'] = comment.post.post_id
+        request.session['comments_count'] += 1
+        request.session.modified = True
+        return redirect('view_post', post_id=post_id)  # Prevents re-posting on refresh
+      
 
     post = get_object_or_404(Post, post_id=post_id)
     tags = Tag.objects.filter(post=post)
@@ -152,7 +230,13 @@ def delete_post(request, post_id):
     post = get_object_or_404(Post, post_id=post_id)
     if request.method == 'POST':
         post.delete()
+        # update the session count for created posts and last post created
+        request.session['created_posts_count'] -= 1
+        request.session['last_created_post'] = (
+            Post.objects.filter(user=request.user).order_by('-create_date').values_list('post_id', flat=True).first())
+        request.session.modified = True
         return redirect('home')
+
     return render(request, 'delete_post.html', {'post': post})
 
 
@@ -253,9 +337,18 @@ def bookmark_view(request):
 
         if action == 'add':
             Bookmark.objects.get_or_create(user=request.user, post=post)
+            request.session['saved_posts_count'] += 1
+            request.session['last_saved_post'] = post.post_id
+            request.session.modified = True
+            print(request.session)
             return JsonResponse({'status': 'added'})
         elif action == 'remove':
             Bookmark.objects.filter(user=request.user, post=post).delete()
+            request.session['saved_posts_count'] -= 1
+            last_saved_post = Bookmark.objects.filter(user=request.user).last()
+            request.session['last_saved_post'] = last_saved_post.post.post_id if last_saved_post else None
+            request.session.modified = True
+            print(request.session)
             return JsonResponse({'status': 'removed'})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -268,6 +361,13 @@ def delete_comment(request, post_id, comment_id):
         if request.method == 'POST':
             comment.delete()
             messages.success(request, 'Comment deleted successfully.')
+            # decrement the count of comments
+            # add last comment
+            request.session['comments_count'] -= 1
+            last_comment = Comment.objects.filter(user=request.user).order_by('-created_time').first()
+            request.session['last_comment'] = last_comment.comment_id if last_comment else None
+            request.session['last_commented_post'] = last_comment.post.post_id if last_comment else None
+            request.session.modified = True
         return redirect('view_post', post_id=comment.post.post_id)
     else:
         messages.error(request, 'You do not have permission to delete this comment.')
@@ -352,9 +452,17 @@ def like_view(request):
 
         if action == 'add':
             Like.objects.get_or_create(user=request.user, post=post)
+            request.session['liked_posts_count'] += 1
+            request.session['last_liked_post'] = post.post_id
+            request.session.modified = True
             return JsonResponse({'status': 'added', 'likes_count': post.likes_count()})
         elif action == 'remove':
             Like.objects.filter(user=request.user, post=post).delete()
+            request.session['liked_posts_count'] -= 1
+            last_liked_post = Like.objects.filter(user=request.user).last()
+            # here we extract the id of the post and store it
+            request.session['last_liked_post'] = last_liked_post.post.post_id if last_liked_post else None
+            request.session.modified = True
             return JsonResponse({'status': 'removed', 'likes_count': post.likes_count()})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)

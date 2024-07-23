@@ -21,10 +21,11 @@
 
 
         <a href="{% url 'library'%}">Library</a>
-        <a href="#">Stories</a>
-        <a href="#">Stats</a>
-        <a href="#">Settings</a>
-        <a href="#">Help</a>
+        <a href="{% url 'analytics' %}">Stats</a>
+        <a href="{% url 'password_change' %}">Change Password</a>
+        <a href="{% url 'contact' %}">Help</a>
+        <a href="{% url 'about' %}"></a>
+        <a class="nav-link" href="/logout/">Logout</a>
     </div>
 
     <div id="main">
@@ -72,11 +73,7 @@
                         </a>
                     </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout/">
-                            Logout
-                        </a>
-                    </li>
+
                         <li class="nav-item">
                     
                         <span style="cursor: pointer;" onclick="openNav()">
