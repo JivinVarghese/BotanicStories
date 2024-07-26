@@ -169,7 +169,7 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 
-@login_required
+# @login_required
 def view_post(request, post_id):
     form = CommentForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -360,7 +360,7 @@ def delete_comment(request, post_id, comment_id):
     if request.user == comment.user:
         if request.method == 'POST':
             comment.delete()
-            messages.success(request, 'Comment deleted successfully.')
+            # messages.success(request, 'Comment deleted successfully.')
             # decrement the count of comments
             # add last comment
             request.session['comments_count'] -= 1
@@ -381,7 +381,7 @@ def edit_comment(request, post_id, comment_id):
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Comment updated successfully')
+            # messages.success(request, 'Comment updated successfully')
             return redirect('view_post', post_id=post_id)
         else:
             messages.error(request, 'There was an error updating your comment')
